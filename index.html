@@ -2,14 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
 
   <title>Edge-AI Smart Irrigation</title>
 
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
+    /* =====================================================
+       BASE
+    ===================================================== */
+
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
@@ -20,177 +30,293 @@
     }
 
     body {
-      background:
-        radial-gradient(circle at 20% 10%, rgba(16,185,129,.10), transparent 30%),
-        radial-gradient(circle at 80% 20%, rgba(6,182,212,.10), transparent 30%),
-        radial-gradient(circle at 50% 90%, rgba(139,92,246,.08), transparent 35%),
-        #020617;
+      margin: 0;
       overflow-x: hidden;
+      color: #f8fafc;
+
+      background:
+        radial-gradient(
+          circle at 12% 10%,
+          rgba(16, 185, 129, 0.13),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 88% 15%,
+          rgba(6, 182, 212, 0.11),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 55% 88%,
+          rgba(139, 92, 246, 0.10),
+          transparent 32%
+        ),
+        #020617;
+
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
-    /* -------------------------------------------------
-       FLUID AURORA
-    ------------------------------------------------- */
+    button {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+
+    /* =====================================================
+       AURORA BACKGROUND
+    ===================================================== */
 
     .aurora {
       position: fixed;
-      inset: -20%;
-      z-index: -5;
+      inset: -25%;
+      z-index: -10;
       pointer-events: none;
-      filter: blur(75px);
-      opacity: .7;
-      animation: auroraMove 18s ease-in-out infinite alternate;
+
+      opacity: 0.65;
+      filter: blur(85px);
+
       background:
-        radial-gradient(circle at 20% 30%, rgba(16,185,129,.22), transparent 30%),
-        radial-gradient(circle at 75% 25%, rgba(6,182,212,.18), transparent 30%),
-        radial-gradient(circle at 55% 75%, rgba(139,92,246,.20), transparent 32%),
-        radial-gradient(circle at 15% 85%, rgba(59,130,246,.12), transparent 28%);
+        radial-gradient(
+          circle at 20% 25%,
+          rgba(16, 185, 129, 0.28),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 78% 22%,
+          rgba(6, 182, 212, 0.22),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 60% 72%,
+          rgba(139, 92, 246, 0.20),
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 15% 82%,
+          rgba(59, 130, 246, 0.15),
+          transparent 28%
+        );
+
+      animation:
+        auroraFloat
+        18s
+        ease-in-out
+        infinite
+        alternate;
     }
 
-    @keyframes auroraMove {
+    @keyframes auroraFloat {
       0% {
-        transform: translate3d(-2%, -1%, 0) scale(1);
+        transform:
+          translate3d(-2%, -1%, 0)
+          scale(1);
       }
 
       50% {
-        transform: translate3d(2%, 3%, 0) scale(1.08);
+        transform:
+          translate3d(3%, 2%, 0)
+          scale(1.08);
       }
 
       100% {
-        transform: translate3d(-3%, 1%, 0) scale(1.12);
+        transform:
+          translate3d(-2%, 4%, 0)
+          scale(1.14);
       }
     }
 
-    /* -------------------------------------------------
+
+    /* =====================================================
        GLASS
-    ------------------------------------------------- */
+    ===================================================== */
 
     .glass {
       background:
         linear-gradient(
           135deg,
-          rgba(255,255,255,.075),
-          rgba(255,255,255,.025)
+          rgba(255, 255, 255, 0.075),
+          rgba(255, 255, 255, 0.025)
         );
 
-      backdrop-filter: blur(28px) saturate(135%);
-      -webkit-backdrop-filter: blur(28px) saturate(135%);
+      border:
+        1px solid
+        rgba(255, 255, 255, 0.075);
 
-      border: 1px solid rgba(255,255,255,.08);
+      backdrop-filter:
+        blur(26px)
+        saturate(140%);
+
+      -webkit-backdrop-filter:
+        blur(26px)
+        saturate(140%);
 
       box-shadow:
-        0 24px 70px rgba(0,0,0,.38),
-        inset 0 1px 0 rgba(255,255,255,.05);
+        0 25px 70px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255,255,255,.045);
 
       transition:
-        transform .45s cubic-bezier(.2,.8,.2,1),
-        border-color .45s ease,
-        box-shadow .45s ease;
+        transform .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease;
     }
 
     .glass:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255,255,255,.13);
+      transform: translateY(-2px);
+
+      border-color:
+        rgba(255, 255, 255, 0.12);
+
       box-shadow:
-        0 30px 80px rgba(0,0,0,.42),
-        inset 0 1px 0 rgba(255,255,255,.07);
+        0 30px 85px rgba(0,0,0,.44),
+        inset 0 1px 0 rgba(255,255,255,.06);
     }
 
-    .pressable {
+
+    /* =====================================================
+       PRESS EFFECT
+    ===================================================== */
+
+    .press {
       transition:
-        transform .18s ease,
-        filter .18s ease;
+        transform .16s ease,
+        filter .16s ease;
     }
 
-    .pressable:active {
-      transform: scale(.97);
-      filter: brightness(.93);
+    .press:active {
+      transform: scale(.975);
+      filter: brightness(.94);
     }
 
-    /* -------------------------------------------------
-       NUMBER ANIMATION
-    ------------------------------------------------- */
+
+    /* =====================================================
+       READINGS
+    ===================================================== */
 
     .reading {
+      display: inline-block;
       will-change: transform;
-      transition:
-        transform .28s cubic-bezier(.2,.8,.2,1),
-        opacity .28s ease;
     }
 
     .reading.changed {
-      animation: numberPop .42s ease;
+      animation:
+        readingPop
+        .40s
+        cubic-bezier(.2,.8,.2,1);
     }
 
-    @keyframes numberPop {
-      0%   { transform: scale(1); }
-      45%  { transform: scale(1.075); }
-      100% { transform: scale(1); }
+    @keyframes readingPop {
+      0% {
+        transform: scale(1);
+      }
+
+      45% {
+        transform: scale(1.08);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
-    /* -------------------------------------------------
+
+    /* =====================================================
        PUMP
-    ------------------------------------------------- */
+    ===================================================== */
 
     .pump-spin {
-      animation: pumpSpin 1.8s linear infinite;
+      animation:
+        pumpSpin
+        1.7s
+        linear
+        infinite;
     }
 
     @keyframes pumpSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
       to {
         transform: rotate(360deg);
       }
     }
 
+
     .pump-glow {
-      animation: pumpGlow 2s ease-in-out infinite;
+      animation:
+        pumpGlow
+        2s
+        ease-in-out
+        infinite;
     }
 
     @keyframes pumpGlow {
-      0%, 100% {
-        box-shadow: 0 0 0 rgba(16,185,129,0);
+      0%,
+      100% {
+        box-shadow:
+          0 0 0 rgba(16,185,129,0);
       }
 
       50% {
-        box-shadow: 0 0 36px rgba(16,185,129,.24);
+        box-shadow:
+          0 0 40px rgba(16,185,129,.25);
       }
     }
 
-    /* -------------------------------------------------
+
+    /* =====================================================
+       PROGRESS
+    ===================================================== */
+
+    .progress {
+      transition:
+        width .65s
+        cubic-bezier(.2,.8,.2,1);
+    }
+
+
+    /* =====================================================
        FLOATING ORBS
-    ------------------------------------------------- */
+    ===================================================== */
 
     .orb {
-      position: absolute;
+      position: fixed;
+      z-index: -7;
       border-radius: 9999px;
       pointer-events: none;
       filter: blur(2px);
-      opacity: .65;
-      animation: floatOrb 12s ease-in-out infinite;
+      opacity: .42;
+
+      animation:
+        orbFloat
+        12s
+        ease-in-out
+        infinite;
     }
 
-    @keyframes floatOrb {
-      0%,100% {
-        transform: translate3d(0,0,0);
+    @keyframes orbFloat {
+      0%,
+      100% {
+        transform:
+          translate3d(0,0,0);
       }
 
       50% {
-        transform: translate3d(20px,-24px,0);
+        transform:
+          translate3d(18px,-25px,0);
       }
     }
 
-    /* -------------------------------------------------
-       PROGRESS
-    ------------------------------------------------- */
 
-    .progress-fill {
-      transition:
-        width .8s cubic-bezier(.2,.8,.2,1);
-    }
-
-    /* -------------------------------------------------
+    /* =====================================================
        SCROLLBAR
-    ------------------------------------------------- */
+    ===================================================== */
 
     ::-webkit-scrollbar {
       width: 8px;
@@ -201,86 +327,151 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: rgba(148,163,184,.22);
+      background:
+        rgba(148,163,184,.22);
+
       border-radius: 999px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(148,163,184,.35);
+      background:
+        rgba(148,163,184,.34);
     }
 
-    /* -------------------------------------------------
+
+    /* =====================================================
        MOBILE
-    ------------------------------------------------- */
+    ===================================================== */
 
     @media (max-width: 640px) {
+
       .glass:hover {
         transform: none;
       }
+
     }
   </style>
 </head>
 
 
-<body class="min-h-screen text-slate-100 antialiased">
+<body>
 
+  <!-- Background -->
   <div class="aurora"></div>
 
-  <!-- Floating decorative lights -->
-  <div class="orb w-40 h-40 bg-emerald-500/10 top-24 left-[8%]"></div>
-  <div class="orb w-32 h-32 bg-cyan-500/10 top-[50%] right-[8%]" style="animation-delay:2s"></div>
-  <div class="orb w-28 h-28 bg-violet-500/10 bottom-20 left-[35%]" style="animation-delay:4s"></div>
+  <div
+    class="orb w-40 h-40
+           bg-emerald-500/10
+           top-20 left-[5%]"
+  ></div>
+
+  <div
+    class="orb w-32 h-32
+           bg-cyan-500/10
+           top-[48%] right-[5%]"
+    style="animation-delay:2s"
+  ></div>
+
+  <div
+    class="orb w-28 h-28
+           bg-violet-500/10
+           bottom-16 left-[38%]"
+    style="animation-delay:4s"
+  ></div>
 
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10">
+  <main
+    class="max-w-7xl mx-auto
+           px-4 sm:px-6 lg:px-8
+           py-7 sm:py-10"
+  >
+
 
     <!-- =================================================
          HEADER
     ================================================== -->
 
-    <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-10">
+    <header
+      class="flex flex-col lg:flex-row
+             lg:items-center
+             lg:justify-between
+             gap-5 mb-10"
+    >
 
       <div class="flex items-center gap-4">
 
         <div class="relative">
 
-          <div class="absolute inset-0 rounded-2xl bg-emerald-400/30 blur-xl"></div>
+          <div
+            class="absolute inset-0
+                   bg-emerald-400/25
+                   rounded-2xl blur-xl"
+          ></div>
 
-          <div class="relative w-14 h-14 rounded-2xl glass flex items-center justify-center text-emerald-400">
-
-            <i data-lucide="sprout" class="w-7 h-7"></i>
-
+          <div
+            class="relative
+                   w-14 h-14
+                   rounded-2xl glass
+                   flex items-center justify-center
+                   text-emerald-300"
+          >
+            <i
+              data-lucide="sprout"
+              class="w-7 h-7"
+            ></i>
           </div>
 
         </div>
 
+
         <div>
 
-          <div class="flex items-center gap-2">
+          <div
+            class="flex items-center
+                   gap-2 flex-wrap"
+          >
 
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
+            <h1
+              class="text-2xl sm:text-3xl lg:text-4xl
+                     font-black tracking-tight"
+            >
               Edge-AI Smart Irrigation
             </h1>
 
             <span
-              class="hidden sm:inline-flex px-2.5 py-1 rounded-full
-                     bg-violet-400/10 border border-violet-400/20
-                     text-[10px] font-bold uppercase tracking-widest
-                     text-violet-300">
+              class="px-2.5 py-1
+                     rounded-full
+                     bg-violet-400/10
+                     border border-violet-400/20
+                     text-[10px]
+                     font-bold
+                     tracking-widest
+                     uppercase
+                     text-violet-300"
+            >
               AI
             </span>
 
           </div>
 
-          <div class="flex items-center gap-2 mt-1 text-sm text-slate-400">
+
+          <div
+            class="flex items-center gap-2
+                   mt-1 text-sm"
+          >
 
             <span
               id="connection-dot"
-              class="w-2.5 h-2.5 rounded-full bg-amber-400">
-            </span>
+              class="w-2.5 h-2.5
+                     rounded-full
+                     bg-amber-400"
+            ></span>
 
-            <span id="connection-text">
-              Connecting to ESP8266...
+            <span
+              id="connection-text"
+              class="text-slate-400"
+            >
+              Connecting...
             </span>
 
           </div>
@@ -290,27 +481,47 @@
       </div>
 
 
-      <!-- System status -->
+      <!-- STATUS -->
 
-      <div class="glass rounded-full px-4 py-2.5 flex items-center gap-3 w-fit">
+      <div
+        class="glass rounded-full
+               px-4 py-2.5
+               flex items-center gap-3
+               w-fit"
+      >
 
         <span class="relative flex h-3 w-3">
 
           <span
             id="status-ping"
-            class="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-60 animate-ping">
-          </span>
+            class="absolute
+                   inline-flex
+                   h-full w-full
+                   rounded-full
+                   bg-amber-400
+                   opacity-60
+                   animate-ping"
+          ></span>
 
           <span
             id="status-dot"
-            class="relative inline-flex rounded-full h-3 w-3 bg-amber-400">
-          </span>
+            class="relative
+                   inline-flex
+                   rounded-full
+                   h-3 w-3
+                   bg-amber-400"
+          ></span>
 
         </span>
 
         <span
           id="system-status"
-          class="text-xs font-bold uppercase tracking-[.18em] text-amber-300">
+          class="text-xs
+                 font-bold
+                 uppercase
+                 tracking-[.18em]
+                 text-amber-300"
+        >
           Connecting
         </span>
 
@@ -319,60 +530,149 @@
     </header>
 
 
+
     <!-- =================================================
          HERO
     ================================================== -->
 
-    <section class="glass rounded-[2rem] p-6 sm:p-8 lg:p-10 mb-8 relative overflow-hidden">
+    <section
+      class="glass
+             rounded-[2rem]
+             p-6 sm:p-8 lg:p-10
+             mb-8
+             relative
+             overflow-hidden"
+    >
 
-      <div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-emerald-400/8 blur-3xl"></div>
-      <div class="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-cyan-400/8 blur-3xl"></div>
+      <div
+        class="absolute
+               -top-24 -right-24
+               w-72 h-72
+               rounded-full
+               bg-emerald-400/10
+               blur-3xl"
+      ></div>
 
-      <div class="relative grid lg:grid-cols-[1.4fr_.6fr] gap-8 items-center">
+      <div
+        class="absolute
+               -bottom-24 -left-24
+               w-72 h-72
+               rounded-full
+               bg-cyan-400/10
+               blur-3xl"
+      ></div>
+
+
+      <div
+        class="relative
+               grid lg:grid-cols-[1.35fr_.65fr]
+               gap-8
+               items-center"
+      >
 
         <div>
 
-          <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-emerald-300 mb-4">
+          <div
+            class="flex items-center gap-2
+                   text-xs
+                   font-bold
+                   uppercase
+                   tracking-[.22em]
+                   text-emerald-300
+                   mb-4"
+          >
 
-            <i data-lucide="waves" class="w-4 h-4"></i>
+            <i
+              data-lucide="waves"
+              class="w-4 h-4"
+            ></i>
 
             Live Agricultural Intelligence
 
           </div>
 
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight max-w-3xl">
 
-            Water only when the field
+          <h2
+            class="text-3xl sm:text-4xl lg:text-5xl
+                   font-black
+                   leading-tight
+                   max-w-3xl"
+          >
 
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300">
-              actually needs it.
+            Smart watering based on
+
+            <span
+              class="text-transparent
+                     bg-clip-text
+                     bg-gradient-to-r
+                     from-emerald-300
+                     via-cyan-300
+                     to-violet-300"
+            >
+              real field conditions.
             </span>
 
           </h2>
 
-          <p class="text-slate-400 mt-4 max-w-2xl text-sm sm:text-base leading-7">
 
-            Monitor temperature, humidity, soil moisture and rainfall in real time.
-            Let the ML model automate irrigation or take direct control whenever required.
-
+          <p
+            class="text-slate-400
+                   mt-4
+                   max-w-2xl
+                   text-sm sm:text-base
+                   leading-7"
+          >
+            Live temperature, humidity, soil moisture and rainfall
+            monitoring with Random Forest based irrigation automation
+            and direct manual pump control.
           </p>
 
 
-          <div class="flex flex-wrap gap-3 mt-7">
+          <div
+            class="flex flex-wrap
+                   gap-3 mt-7"
+          >
 
-            <div class="glass rounded-full px-4 py-2 text-xs text-slate-300 flex items-center gap-2">
+            <div
+              class="glass
+                     rounded-full
+                     px-4 py-2
+                     text-xs
+                     text-slate-300
+                     flex items-center gap-2"
+            >
 
-              <i data-lucide="brain-circuit" class="w-4 h-4 text-violet-300"></i>
+              <i
+                data-lucide="brain-circuit"
+                class="w-4 h-4
+                       text-violet-300"
+              ></i>
 
-              <span id="model-status">ML model ready</span>
+              <span id="model-status">
+                Random Forest • Active
+              </span>
 
             </div>
 
-            <div class="glass rounded-full px-4 py-2 text-xs text-slate-300 flex items-center gap-2">
 
-              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-300"></i>
+            <div
+              class="glass
+                     rounded-full
+                     px-4 py-2
+                     text-xs
+                     text-slate-300
+                     flex items-center gap-2"
+            >
 
-              <span id="water-status">Irrigation protected</span>
+              <i
+                data-lucide="shield-check"
+                class="w-4 h-4
+                       text-emerald-300"
+              ></i>
+
+              <span id="water-status">
+                Irrigation protected
+              </span>
 
             </div>
 
@@ -381,50 +681,87 @@
         </div>
 
 
-        <!-- AI decision -->
+        <!-- AI DECISION -->
 
-        <div class="glass rounded-3xl p-6">
+        <div
+          class="glass
+                 rounded-3xl
+                 p-6"
+        >
 
-          <div class="flex items-center justify-between">
+          <div
+            class="flex items-center
+                   justify-between"
+          >
 
-            <span class="text-xs uppercase tracking-widest text-slate-500 font-bold">
+            <span
+              class="text-xs
+                     uppercase
+                     tracking-widest
+                     text-slate-500
+                     font-bold"
+            >
               AI Decision
             </span>
 
-            <div
+
+            <span
               id="ai-badge"
-              class="px-2.5 py-1 rounded-full bg-violet-400/10
+              class="px-2.5 py-1
+                     rounded-full
+                     bg-violet-400/10
                      border border-violet-400/20
-                     text-[10px] uppercase tracking-wider
-                     text-violet-300">
+                     text-[10px]
+                     uppercase
+                     tracking-wider
+                     text-violet-300"
+            >
               Waiting
-            </div>
+            </span>
 
           </div>
 
-          <div class="mt-6 flex items-center gap-4">
+
+          <div
+            class="mt-6
+                   flex items-center gap-4"
+          >
 
             <div
-              id="ai-icon-box"
-              class="w-14 h-14 rounded-2xl flex items-center justify-center
-                     bg-violet-400/10 border border-violet-400/20
-                     text-violet-300">
+              class="w-14 h-14
+                     rounded-2xl
+                     bg-violet-400/10
+                     border border-violet-400/20
+                     flex items-center
+                     justify-center
+                     text-violet-300"
+            >
 
-              <i data-lucide="brain-circuit" class="w-7 h-7"></i>
+              <i
+                data-lucide="brain-circuit"
+                class="w-7 h-7"
+              ></i>
 
             </div>
+
 
             <div>
 
               <div
                 id="ai-decision"
-                class="text-2xl font-black">
+                class="text-2xl
+                       font-black"
+              >
                 Waiting
               </div>
 
               <div
                 id="ai-reason"
-                class="text-xs text-slate-500 mt-1">
+                class="text-xs
+                       text-slate-500
+                       mt-1
+                       max-w-xs"
+              >
                 Waiting for telemetry
               </div>
 
@@ -439,56 +776,107 @@
     </section>
 
 
+
     <!-- =================================================
          TELEMETRY
     ================================================== -->
 
     <section class="mb-8">
 
-      <div class="flex items-center justify-between mb-4">
+      <div
+        class="flex items-end
+               justify-between
+               mb-4"
+      >
 
         <div>
 
-          <p class="text-xs uppercase tracking-[.2em] text-slate-500 font-bold">
+          <p
+            class="text-xs
+                   uppercase
+                   tracking-[.2em]
+                   text-slate-500
+                   font-bold"
+          >
             Live Telemetry
           </p>
 
-          <h3 class="text-xl font-bold mt-1">
-            Field conditions
+          <h3
+            class="text-xl
+                   font-bold
+                   mt-1"
+          >
+            Field Conditions
           </h3>
 
         </div>
 
-        <div class="text-xs text-slate-500">
-          Updated <span id="last-update">--</span>
+
+        <div
+          class="text-xs
+                 text-slate-500"
+        >
+          Updated
+          <span id="last-update">--</span>
         </div>
 
       </div>
 
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
-        <!-- Temperature -->
+      <div
+        class="grid
+               grid-cols-1
+               sm:grid-cols-2
+               xl:grid-cols-4
+               gap-5"
+      >
 
-        <div class="glass rounded-3xl p-5">
+        <!-- TEMPERATURE -->
 
-          <div class="flex items-start justify-between">
+        <div
+          class="glass
+                 rounded-3xl
+                 p-5"
+        >
+
+          <div
+            class="flex
+                   items-start
+                   justify-between"
+          >
 
             <div>
 
-              <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">
+              <p
+                class="text-xs
+                       uppercase
+                       tracking-widest
+                       text-slate-500
+                       font-bold"
+              >
                 Temperature
               </p>
 
-              <div class="flex items-end gap-1 mt-3">
+              <div
+                class="flex
+                       items-end
+                       gap-1 mt-3"
+              >
 
                 <span
                   id="temp-val"
-                  class="reading text-4xl sm:text-5xl font-black">
+                  class="reading
+                         text-4xl sm:text-5xl
+                         font-black"
+                >
                   --
                 </span>
 
-                <span class="text-slate-500 mb-1">
+                <span
+                  class="text-slate-500
+                         mb-1"
+                >
                   °C
                 </span>
 
@@ -496,54 +884,105 @@
 
             </div>
 
-            <div class="w-11 h-11 rounded-2xl bg-amber-400/10
-                        border border-amber-400/15
-                        flex items-center justify-center text-amber-300">
 
-              <i data-lucide="thermometer-sun" class="w-5 h-5"></i>
+            <div
+              class="w-11 h-11
+                     rounded-2xl
+                     bg-amber-400/10
+                     border border-amber-400/15
+                     flex items-center
+                     justify-center
+                     text-amber-300"
+            >
+
+              <i
+                data-lucide="thermometer-sun"
+                class="w-5 h-5"
+              ></i>
 
             </div>
 
           </div>
 
-          <div class="mt-6 h-2 rounded-full bg-slate-900/80 overflow-hidden">
+
+          <div
+            class="mt-6
+                   h-2
+                   rounded-full
+                   bg-slate-900
+                   overflow-hidden"
+          >
 
             <div
               id="temp-bar"
-              class="progress-fill h-full rounded-full bg-gradient-to-r from-amber-400 to-rose-400"
-              style="width:0%">
-            </div>
+              class="progress
+                     h-full
+                     rounded-full
+                     bg-gradient-to-r
+                     from-amber-400
+                     to-rose-400"
+              style="width:0%"
+            ></div>
 
           </div>
 
-          <p class="text-xs text-slate-500 mt-3">
-            Thermal field load
+          <p
+            class="text-xs
+                   text-slate-500
+                   mt-3"
+          >
+            Current ambient temperature
           </p>
 
         </div>
 
 
-        <!-- Humidity -->
 
-        <div class="glass rounded-3xl p-5">
+        <!-- HUMIDITY -->
 
-          <div class="flex items-start justify-between">
+        <div
+          class="glass
+                 rounded-3xl
+                 p-5"
+        >
+
+          <div
+            class="flex
+                   items-start
+                   justify-between"
+          >
 
             <div>
 
-              <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">
+              <p
+                class="text-xs
+                       uppercase
+                       tracking-widest
+                       text-slate-500
+                       font-bold"
+              >
                 Air Humidity
               </p>
 
-              <div class="flex items-end gap-1 mt-3">
+              <div
+                class="flex
+                       items-end
+                       gap-1 mt-3"
+              >
 
                 <span
                   id="hum-val"
-                  class="reading text-4xl sm:text-5xl font-black">
+                  class="reading
+                         text-4xl sm:text-5xl
+                         font-black"
+                >
                   --
                 </span>
 
-                <span class="text-slate-500 mb-1">
+                <span
+                  class="text-slate-500
+                         mb-1"
+                >
                   %
                 </span>
 
@@ -551,54 +990,105 @@
 
             </div>
 
-            <div class="w-11 h-11 rounded-2xl bg-cyan-400/10
-                        border border-cyan-400/15
-                        flex items-center justify-center text-cyan-300">
 
-              <i data-lucide="droplets" class="w-5 h-5"></i>
+            <div
+              class="w-11 h-11
+                     rounded-2xl
+                     bg-cyan-400/10
+                     border border-cyan-400/15
+                     flex items-center
+                     justify-center
+                     text-cyan-300"
+            >
+
+              <i
+                data-lucide="droplets"
+                class="w-5 h-5"
+              ></i>
 
             </div>
 
           </div>
 
-          <div class="mt-6 h-2 rounded-full bg-slate-900/80 overflow-hidden">
+
+          <div
+            class="mt-6
+                   h-2
+                   rounded-full
+                   bg-slate-900
+                   overflow-hidden"
+          >
 
             <div
               id="hum-bar"
-              class="progress-fill h-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-500"
-              style="width:0%">
-            </div>
+              class="progress
+                     h-full
+                     rounded-full
+                     bg-gradient-to-r
+                     from-cyan-400
+                     to-blue-500"
+              style="width:0%"
+            ></div>
 
           </div>
 
-          <p class="text-xs text-slate-500 mt-3">
+          <p
+            class="text-xs
+                   text-slate-500
+                   mt-3"
+          >
             Atmospheric moisture
           </p>
 
         </div>
 
 
-        <!-- Soil -->
 
-        <div class="glass rounded-3xl p-5">
+        <!-- SOIL -->
 
-          <div class="flex items-start justify-between">
+        <div
+          class="glass
+                 rounded-3xl
+                 p-5"
+        >
+
+          <div
+            class="flex
+                   items-start
+                   justify-between"
+          >
 
             <div>
 
-              <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">
+              <p
+                class="text-xs
+                       uppercase
+                       tracking-widest
+                       text-slate-500
+                       font-bold"
+              >
                 Soil Moisture
               </p>
 
-              <div class="flex items-end gap-1 mt-3">
+              <div
+                class="flex
+                       items-end
+                       gap-1 mt-3"
+              >
 
                 <span
                   id="soil-percent"
-                  class="reading text-4xl sm:text-5xl font-black">
+                  class="reading
+                         text-4xl sm:text-5xl
+                         font-black"
+                >
                   --
                 </span>
 
-                <span class="text-slate-500 mb-1">
+                <span
+                  class="text-slate-500
+                         mb-1"
+                >
                   %
                 </span>
 
@@ -606,34 +1096,70 @@
 
             </div>
 
-            <div class="w-11 h-11 rounded-2xl bg-emerald-400/10
-                        border border-emerald-400/15
-                        flex items-center justify-center text-emerald-300">
 
-              <i data-lucide="leaf" class="w-5 h-5"></i>
+            <div
+              class="w-11 h-11
+                     rounded-2xl
+                     bg-emerald-400/10
+                     border border-emerald-400/15
+                     flex items-center
+                     justify-center
+                     text-emerald-300"
+            >
+
+              <i
+                data-lucide="leaf"
+                class="w-5 h-5"
+              ></i>
 
             </div>
 
           </div>
 
-          <div class="mt-5 h-3 rounded-full bg-slate-900/80 overflow-hidden">
+
+          <div
+            class="mt-5
+                   h-3
+                   rounded-full
+                   bg-slate-900
+                   overflow-hidden"
+          >
 
             <div
               id="soil-bar"
-              class="progress-fill h-full rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400"
-              style="width:0%">
-            </div>
+              class="progress
+                     h-full
+                     rounded-full
+                     bg-gradient-to-r
+                     from-rose-400
+                     via-amber-400
+                     to-emerald-400"
+              style="width:0%"
+            ></div>
 
           </div>
 
-          <div class="flex justify-between mt-3 text-xs">
 
-            <span id="soil-status" class="font-bold text-slate-400">
+          <div
+            class="flex
+                   justify-between
+                   mt-3
+                   text-xs"
+          >
+
+            <span
+              id="soil-status"
+              class="font-bold
+                     text-slate-500"
+            >
               Waiting
             </span>
 
-            <span class="text-slate-600">
-              ADC <span id="soil-raw">--</span>
+            <span
+              class="text-slate-600"
+            >
+              ADC
+              <span id="soil-raw">--</span>
             </span>
 
           </div>
@@ -641,51 +1167,84 @@
         </div>
 
 
-        <!-- Rain -->
 
-        <div class="glass rounded-3xl p-5">
+        <!-- RAIN -->
 
-          <div class="flex items-start justify-between">
+        <div
+          class="glass
+                 rounded-3xl
+                 p-5"
+        >
+
+          <div
+            class="flex
+                   items-start
+                   justify-between"
+          >
 
             <div>
 
-              <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">
+              <p
+                class="text-xs
+                       uppercase
+                       tracking-widest
+                       text-slate-500
+                       font-bold"
+              >
                 Rain Sensor
               </p>
 
+
               <div
                 id="rain-status"
-                class="text-3xl sm:text-4xl font-black mt-3">
+                class="text-3xl sm:text-4xl
+                       font-black
+                       mt-3
+                       text-slate-500"
+              >
                 --
               </div>
 
             </div>
 
+
             <div
               id="rain-icon-box"
-              class="w-11 h-11 rounded-2xl
-                     bg-cyan-400/10 border border-cyan-400/15
-                     flex items-center justify-center text-cyan-300">
+              class="w-11 h-11
+                     rounded-2xl
+                     bg-cyan-400/10
+                     border border-cyan-400/15
+                     flex items-center
+                     justify-center
+                     text-cyan-300"
+            >
 
-              <i data-lucide="cloud-rain" class="w-5 h-5"></i>
+              <i
+                data-lucide="cloud-rain"
+                class="w-5 h-5"
+              ></i>
 
             </div>
 
           </div>
 
-          <div class="mt-6">
 
-            <div class="flex items-center justify-between text-xs text-slate-500">
+          <div
+            class="mt-6
+                   flex
+                   items-center
+                   justify-between
+                   text-xs
+                   text-slate-500"
+          >
 
-              <span>
-                Digital sensor
-              </span>
+            <span>
+              Digital sensor
+            </span>
 
-              <span id="rain-raw">
-                Raw: --
-              </span>
-
-            </div>
+            <span id="rain-raw">
+              Raw: --
+            </span>
 
           </div>
 
@@ -696,80 +1255,170 @@
     </section>
 
 
+
     <!-- =================================================
-         SOIL INTELLIGENCE
+         INTELLIGENCE
     ================================================== -->
 
-    <section class="grid lg:grid-cols-2 gap-5 mb-8">
+    <section
+      class="grid
+             lg:grid-cols-2
+             gap-5
+             mb-8"
+    >
 
-      <!-- Soil analysis -->
+      <!-- SOIL TARGET -->
 
-      <div class="glass rounded-3xl p-6">
+      <div
+        class="glass
+               rounded-3xl
+               p-6"
+      >
 
-        <div class="flex items-center justify-between mb-6">
+        <div
+          class="flex
+                 items-center
+                 justify-between
+                 mb-6"
+        >
 
           <div>
 
-            <p class="text-xs uppercase tracking-[.2em] text-slate-500 font-bold">
+            <p
+              class="text-xs
+                     uppercase
+                     tracking-[.2em]
+                     text-slate-500
+                     font-bold"
+            >
               Soil Intelligence
             </p>
 
-            <h3 class="text-xl font-bold mt-1">
-              Watering target
+            <h3
+              class="text-xl
+                     font-bold
+                     mt-1"
+            >
+              Moisture Target
             </h3>
 
           </div>
 
-          <i data-lucide="sprout" class="w-6 h-6 text-emerald-300"></i>
+
+          <i
+            data-lucide="sprout"
+            class="w-6 h-6
+                   text-emerald-300"
+          ></i>
 
         </div>
 
 
-        <div class="grid grid-cols-2 gap-4">
+        <div
+          class="grid
+                 grid-cols-2
+                 gap-4"
+        >
 
-          <div class="rounded-2xl bg-slate-950/30 border border-white/5 p-4">
+          <div
+            class="rounded-2xl
+                   bg-slate-950/35
+                   border border-white/5
+                   p-4"
+          >
 
-            <p class="text-xs text-slate-500">
+            <p
+              class="text-xs
+                     text-slate-500"
+            >
               Current
             </p>
 
-            <p id="soil-current-large" class="text-2xl font-black mt-2">
+            <p
+              id="soil-current-large"
+              class="text-2xl
+                     font-black
+                     mt-2"
+            >
               --%
             </p>
 
           </div>
 
-          <div class="rounded-2xl bg-slate-950/30 border border-white/5 p-4">
 
-            <p class="text-xs text-slate-500">
+          <div
+            class="rounded-2xl
+                   bg-slate-950/35
+                   border border-white/5
+                   p-4"
+          >
+
+            <p
+              class="text-xs
+                     text-slate-500"
+            >
               Target
             </p>
 
-            <p id="soil-target" class="text-2xl font-black mt-2">
+            <p
+              id="soil-target"
+              class="text-2xl
+                     font-black
+                     mt-2"
+            >
               65%
             </p>
 
           </div>
 
-          <div class="rounded-2xl bg-slate-950/30 border border-white/5 p-4">
 
-            <p class="text-xs text-slate-500">
-              Water needed
+          <div
+            class="rounded-2xl
+                   bg-slate-950/35
+                   border border-white/5
+                   p-4"
+          >
+
+            <p
+              class="text-xs
+                     text-slate-500"
+            >
+              Moisture gap
             </p>
 
-            <p id="water-needed" class="text-2xl font-black mt-2">
+            <p
+              id="water-needed"
+              class="text-2xl
+                     font-black
+                     mt-2"
+            >
               --
             </p>
 
           </div>
 
-          <div class="rounded-2xl bg-slate-950/30 border border-white/5 p-4">
 
-            <p class="text-xs text-slate-500">
+          <div
+            class="rounded-2xl
+                   bg-slate-950/35
+                   border border-white/5
+                   p-4"
+          >
+
+            <p
+              class="text-xs
+                     text-slate-500"
+            >
               Stop condition
             </p>
 
-            <p id="stop-condition" class="text-sm font-bold mt-2 text-amber-300">
+            <p
+              id="stop-condition"
+              class="text-sm
+                     font-bold
+                     mt-2
+                     text-amber-300"
+            >
               Waiting
             </p>
 
@@ -780,25 +1429,46 @@
 
         <div class="mt-6">
 
-          <div class="flex justify-between text-xs mb-2">
+          <div
+            class="flex
+                   justify-between
+                   text-xs
+                   mb-2"
+          >
 
-            <span class="text-slate-500">
+            <span
+              class="text-slate-500"
+            >
               Progress to target
             </span>
 
-            <span id="soil-progress-label" class="text-slate-400">
+            <span
+              id="soil-progress-label"
+              class="text-slate-400"
+            >
               0%
             </span>
 
           </div>
 
-          <div class="h-3 rounded-full bg-slate-900 overflow-hidden">
+
+          <div
+            class="h-3
+                   rounded-full
+                   bg-slate-900
+                   overflow-hidden"
+          >
 
             <div
               id="soil-progress"
-              class="progress-fill h-full rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400"
-              style="width:0%">
-            </div>
+              class="progress
+                     h-full
+                     rounded-full
+                     bg-gradient-to-r
+                     from-cyan-400
+                     to-emerald-400"
+              style="width:0%"
+            ></div>
 
           </div>
 
@@ -807,89 +1477,182 @@
       </div>
 
 
-      <!-- Watering intelligence -->
 
-      <div class="glass rounded-3xl p-6">
+      <!-- IRRIGATION -->
 
-        <div class="flex items-center justify-between mb-6">
+      <div
+        class="glass
+               rounded-3xl
+               p-6"
+      >
+
+        <div
+          class="flex
+                 items-center
+                 justify-between
+                 mb-6"
+        >
 
           <div>
 
-            <p class="text-xs uppercase tracking-[.2em] text-slate-500 font-bold">
+            <p
+              class="text-xs
+                     uppercase
+                     tracking-[.2em]
+                     text-slate-500
+                     font-bold"
+            >
               Irrigation Intelligence
             </p>
 
-            <h3 class="text-xl font-bold mt-1">
-              Live watering state
+            <h3
+              class="text-xl
+                     font-bold
+                     mt-1"
+            >
+              Live Watering State
             </h3>
 
           </div>
 
+
           <div
             id="pump-state-mini"
-            class="px-3 py-1.5 rounded-full bg-slate-800/70
-                   border border-slate-700 text-xs font-bold">
+            class="px-3 py-1.5
+                   rounded-full
+                   bg-slate-800
+                   border border-slate-700
+                   text-xs
+                   font-bold
+                   text-slate-500"
+          >
             OFF
           </div>
 
         </div>
 
 
-        <div class="rounded-3xl bg-slate-950/35 border border-white/5 p-5">
+        <div
+          class="rounded-3xl
+                 bg-slate-950/35
+                 border border-white/5
+                 p-5"
+        >
 
-          <div class="flex items-center justify-between">
+          <div
+            class="flex
+                   items-center
+                   justify-between"
+          >
 
             <div>
 
-              <p class="text-xs text-slate-500">
-                Soil change since watering
+              <p
+                class="text-xs
+                       text-slate-500"
+              >
+                Soil change during watering
               </p>
 
-              <p id="soil-change" class="text-3xl font-black mt-2">
+              <p
+                id="soil-change"
+                class="text-3xl
+                       font-black
+                       mt-2"
+              >
                 0%
               </p>
 
             </div>
 
-            <div class="w-14 h-14 rounded-2xl bg-emerald-400/10
-                        border border-emerald-400/15
-                        flex items-center justify-center
-                        text-emerald-300">
 
-              <i data-lucide="trending-up" class="w-7 h-7"></i>
+            <div
+              class="w-14 h-14
+                     rounded-2xl
+                     bg-emerald-400/10
+                     border border-emerald-400/15
+                     flex items-center
+                     justify-center
+                     text-emerald-300"
+            >
+
+              <i
+                data-lucide="trending-up"
+                class="w-7 h-7"
+              ></i>
 
             </div>
 
           </div>
 
-          <p id="watering-message" class="text-sm text-slate-400 mt-4 leading-6">
-            Start watering to observe the soil response.
+
+          <p
+            id="watering-message"
+            class="text-sm
+                   text-slate-400
+                   mt-4
+                   leading-6"
+          >
+            Waiting for watering data.
           </p>
 
         </div>
 
 
-        <div class="grid grid-cols-2 gap-4 mt-4">
+        <div
+          class="grid
+                 grid-cols-2
+                 gap-4
+                 mt-4"
+        >
 
-          <div class="rounded-2xl bg-slate-950/30 border border-white/5 p-4">
+          <div
+            class="rounded-2xl
+                   bg-slate-950/35
+                   border border-white/5
+                   p-4"
+          >
 
-            <p class="text-xs text-slate-500">
+            <p
+              class="text-xs
+                     text-slate-500"
+            >
               Pump runtime
             </p>
 
-            <p id="pump-runtime" class="text-xl font-black mt-2">
+            <p
+              id="pump-runtime"
+              class="text-xl
+                     font-black
+                     mt-2"
+            >
               00:00
             </p>
 
           </div>
 
-          <div class="rounded-2xl bg-slate-950/30 border border-white/5 p-4">
 
-            <p class="text-xs text-slate-500">
+          <div
+            class="rounded-2xl
+                   bg-slate-950/35
+                   border border-white/5
+                   p-4"
+          >
+
+            <p
+              class="text-xs
+                     text-slate-500"
+            >
               Recommended action
             </p>
 
-            <p id="recommended-action" class="text-sm font-bold mt-2 text-emerald-300">
+            <p
+              id="recommended-action"
+              class="text-sm
+                     font-bold
+                     mt-2
+                     text-emerald-300"
+            >
               Waiting
             </p>
 
@@ -902,46 +1665,98 @@
     </section>
 
 
+
     <!-- =================================================
          CONTROL CENTER
     ================================================== -->
 
-    <section class="glass rounded-[2rem] p-6 sm:p-8 mb-8">
+    <section
+      class="glass
+             rounded-[2rem]
+             p-6 sm:p-8
+             mb-8"
+    >
 
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-8">
+      <div
+        class="flex
+               flex-col
+               lg:flex-row
+               lg:items-center
+               lg:justify-between
+               gap-5
+               mb-8"
+      >
 
         <div>
 
-          <p class="text-xs uppercase tracking-[.2em] text-slate-500 font-bold">
+          <p
+            class="text-xs
+                   uppercase
+                   tracking-[.2em]
+                   text-slate-500
+                   font-bold"
+          >
             Command Center
           </p>
 
-          <h3 class="text-2xl sm:text-3xl font-black mt-1">
-            Pump control
+          <h3
+            class="text-2xl sm:text-3xl
+                   font-black
+                   mt-1"
+          >
+            Pump Control
           </h3>
 
-          <p id="control-description" class="text-sm text-slate-500 mt-2">
+          <p
+            id="control-description"
+            class="text-sm
+                   text-slate-500
+                   mt-2"
+          >
             AI controls irrigation automatically.
           </p>
 
         </div>
 
 
-        <!-- Mode -->
+        <!-- MODE -->
 
-        <div class="flex p-1 rounded-2xl bg-slate-950/60 border border-white/5 w-full sm:w-auto">
+        <div
+          class="flex
+                 p-1
+                 rounded-2xl
+                 bg-slate-950/60
+                 border border-white/5
+                 w-full sm:w-auto"
+        >
 
           <button
             id="auto-btn"
             onclick="setMode('AUTO')"
-            class="pressable flex-1 sm:flex-none px-6 py-3 rounded-xl
-                   text-sm font-bold
-                   bg-gradient-to-r from-emerald-400 to-teal-400
-                   text-slate-950">
+            class="press
+                   flex-1
+                   sm:flex-none
+                   px-6 py-3
+                   rounded-xl
+                   text-sm
+                   font-bold
+                   bg-gradient-to-r
+                   from-emerald-400
+                   to-teal-400
+                   text-slate-950"
+          >
 
-            <span class="flex items-center justify-center gap-2">
+            <span
+              class="flex
+                     items-center
+                     justify-center
+                     gap-2"
+            >
 
-              <i data-lucide="brain-circuit" class="w-4 h-4"></i>
+              <i
+                data-lucide="brain-circuit"
+                class="w-4 h-4"
+              ></i>
 
               AUTO
 
@@ -953,12 +1768,27 @@
           <button
             id="manual-btn"
             onclick="setMode('MANUAL')"
-            class="pressable flex-1 sm:flex-none px-6 py-3 rounded-xl
-                   text-sm font-bold text-slate-500">
+            class="press
+                   flex-1
+                   sm:flex-none
+                   px-6 py-3
+                   rounded-xl
+                   text-sm
+                   font-bold
+                   text-slate-500"
+          >
 
-            <span class="flex items-center justify-center gap-2">
+            <span
+              class="flex
+                     items-center
+                     justify-center
+                     gap-2"
+            >
 
-              <i data-lucide="hand" class="w-4 h-4"></i>
+              <i
+                data-lucide="hand"
+                class="w-4 h-4"
+              ></i>
 
               MANUAL
 
@@ -971,35 +1801,61 @@
       </div>
 
 
-      <div class="grid lg:grid-cols-[.7fr_1.3fr] gap-6 items-center">
 
-        <!-- Pump visual -->
+      <div
+        class="grid
+               lg:grid-cols-[.7fr_1.3fr]
+               gap-8
+               items-center"
+      >
 
-        <div class="flex items-center justify-center">
+        <!-- PUMP VISUAL -->
+
+        <div
+          class="flex
+                 items-center
+                 justify-center"
+        >
 
           <div
             id="pump-visual"
-            class="w-44 h-44 sm:w-52 sm:h-52 rounded-full
-                   bg-slate-950/40 border border-white/5
-                   flex items-center justify-center
-                   relative">
+            class="w-48 h-48 sm:w-56 sm:h-56
+                   rounded-full
+                   bg-slate-950/40
+                   border border-white/5
+                   flex
+                   items-center
+                   justify-center
+                   relative"
+          >
 
             <div
               id="pump-ring"
-              class="absolute inset-4 rounded-full border border-slate-700/80">
-            </div>
+              class="absolute
+                     inset-5
+                     rounded-full
+                     border border-slate-700/80"
+            ></div>
+
 
             <div
               id="pump-icon-wrap"
-              class="relative w-24 h-24 rounded-3xl
-                     bg-slate-800 border border-slate-700
-                     flex items-center justify-center text-slate-500">
+              class="relative
+                     w-28 h-28
+                     rounded-[2rem]
+                     bg-slate-800
+                     border border-slate-700
+                     flex
+                     items-center
+                     justify-center
+                     text-slate-500"
+            >
 
               <i
                 id="pump-icon"
                 data-lucide="fan"
-                class="w-12 h-12">
-              </i>
+                class="w-14 h-14"
+              ></i>
 
             </div>
 
@@ -1008,31 +1864,56 @@
         </div>
 
 
-        <!-- Controls -->
+
+        <!-- CONTROL -->
 
         <div>
 
-          <div class="flex items-center justify-between mb-4">
+          <div
+            class="flex
+                   items-center
+                   justify-between
+                   mb-5"
+          >
 
             <div>
 
-              <p class="text-sm text-slate-500">
-                Current mode
+              <p
+                class="text-sm
+                       text-slate-500"
+              >
+                Current Mode
               </p>
 
-              <p id="mode-label" class="text-xl font-black mt-1">
+              <p
+                id="mode-label"
+                class="text-2xl
+                       font-black
+                       mt-1"
+              >
                 AUTO
               </p>
 
             </div>
 
+
             <div>
 
-              <p class="text-sm text-slate-500 text-right">
+              <p
+                class="text-sm
+                       text-slate-500
+                       text-right"
+              >
                 Pump
               </p>
 
-              <p id="pump-state" class="text-xl font-black mt-1 text-slate-500">
+              <p
+                id="pump-state"
+                class="text-2xl
+                       font-black
+                       mt-1
+                       text-slate-500"
+              >
                 OFF
               </p>
 
@@ -1045,16 +1926,30 @@
             id="pump-button"
             onclick="togglePump()"
             disabled
-            class="pressable w-full py-5 rounded-2xl
-                   bg-slate-800 text-slate-500
+            class="press
+                   w-full
+                   py-5
+                   rounded-2xl
+                   bg-slate-800
+                   text-slate-500
                    border border-slate-700
-                   font-black text-lg">
+                   font-black
+                   text-lg"
+          >
 
-            <span class="flex items-center justify-center gap-3">
+            <span
+              class="flex
+                     items-center
+                     justify-center
+                     gap-3"
+            >
 
-              <i data-lucide="lock" class="w-5 h-5"></i>
+              <i
+                data-lucide="lock"
+                class="w-5 h-5"
+              ></i>
 
-              AUTO MODE
+              AI CONTROL ACTIVE
 
             </span>
 
@@ -1063,12 +1958,15 @@
 
           <div
             id="manual-help"
-            class="mt-4 rounded-2xl p-4
-                   bg-slate-950/35 border border-white/5
-                   text-sm text-slate-500">
-
-            Switch to MANUAL to control the pump directly from this dashboard.
-
+            class="mt-4
+                   rounded-2xl
+                   p-4
+                   bg-slate-950/35
+                   border border-white/5
+                   text-sm
+                   text-slate-500"
+          >
+            Switch to MANUAL to control the pump from the dashboard.
           </div>
 
         </div>
@@ -1078,31 +1976,56 @@
     </section>
 
 
+
     <!-- =================================================
-         LIVE LOG
+         EVENT LOG
     ================================================== -->
 
-    <section class="glass rounded-3xl p-6">
+    <section
+      class="glass
+             rounded-3xl
+             p-6"
+    >
 
-      <div class="flex items-center justify-between">
+      <div
+        class="flex
+               items-center
+               justify-between"
+      >
 
         <div>
 
-          <p class="text-xs uppercase tracking-[.2em] text-slate-500 font-bold">
+          <p
+            class="text-xs
+                   uppercase
+                   tracking-[.2em]
+                   text-slate-500
+                   font-bold"
+          >
             System Activity
           </p>
 
-          <h3 class="text-xl font-bold mt-1">
-            Live event stream
+          <h3
+            class="text-xl
+                   font-bold
+                   mt-1"
+          >
+            Live Event Stream
           </h3>
 
         </div>
 
+
         <button
           onclick="clearLogs()"
-          class="pressable px-3 py-2 rounded-xl
-                 bg-slate-800/60 border border-slate-700
-                 text-xs text-slate-400">
+          class="press
+                 px-3 py-2
+                 rounded-xl
+                 bg-slate-800/70
+                 border border-slate-700
+                 text-xs
+                 text-slate-400"
+        >
           Clear
         </button>
 
@@ -1111,22 +2034,38 @@
 
       <div
         id="logs"
-        class="mt-5 max-h-64 overflow-y-auto space-y-2 pr-1">
-      </div>
+        class="mt-5
+               max-h-72
+               overflow-y-auto
+               space-y-2
+               pr-1"
+      ></div>
 
     </section>
 
 
-    <footer class="text-center text-xs text-slate-600 py-8">
 
-      Edge-AI Smart Irrigation • ESP8266 Telemetry • ML Assisted Irrigation
-
+    <footer
+      class="text-center
+             text-xs
+             text-slate-600
+             py-8"
+    >
+      Edge-AI Smart Irrigation • ESP8266 • Arduino UNO • Random Forest
     </footer>
 
-  </div>
+  </main>
+
 
 
 <script>
+
+  // ====================================================
+  // CONFIGURATION
+  // ====================================================
+
+  const SOIL_TARGET = 65;
+
 
   // ====================================================
   // STATE
@@ -1143,58 +2082,52 @@
     raining: null
   };
 
+  let lastPumpState = null;
+
   let wateringStartTime = null;
 
   let wateringStartSoil = null;
 
-  let lastPumpServerState = null;
+  let latestSoilPercent = 0;
 
-  const SOIL_TARGET = 65;
-
-  /*
-    IMPORTANT SOIL CALIBRATION
-
-    These are DEFAULT values.
-
-    Change them after testing your sensor.
-
-    Example:
-      DRY_ADC  = 850
-      WET_ADC  = 300
-
-    If your sensor gives larger ADC values when wet,
-    reverse the calculation.
-  */
-
-  const DRY_ADC = 900;
-  const WET_ADC = 300;
+  let telemetryBusy = false;
 
 
   // ====================================================
-  // INITIALIZATION
+  // INIT
   // ====================================================
 
   lucide.createIcons();
 
-  addLog("Dashboard started.");
-  addLog("Waiting for ESP8266 telemetry...");
+  addLog("Dashboard initialized.");
 
-  fetchLiveFeed();
+  addLog("Waiting for live telemetry...");
 
   setInterval(fetchLiveFeed, 2000);
 
+  fetchLiveFeed();
+
 
   // ====================================================
-  // GENERIC VALUE ANIMATION
+  // READING ANIMATION
   // ====================================================
 
-  function setReading(id, value, previous) {
+  function setReading(
+    elementId,
+    value,
+    previousValue
+  ) {
 
-    const element = document.getElementById(id);
+    const element =
+      document.getElementById(elementId);
 
     if (!element) return;
 
-    if (previous !== null && previous !== value) {
+
+    if (
+      previousValue !== null &&
+      previousValue !== value
+    ) {
 
       element.classList.remove("changed");
 
@@ -1203,30 +2136,84 @@
       element.classList.add("changed");
     }
 
+
     element.innerText = value;
   }
 
 
   // ====================================================
-  // SOIL ADC → %
+  // CONNECTION STATUS
   // ====================================================
 
-  function soilPercentFromADC(adc) {
+  function setConnection(online) {
 
-    /*
-      Default assumes:
+    const connectionDot =
+      document.getElementById(
+        "connection-dot"
+      );
 
-      DRY = high ADC
-      WET = low ADC
-    */
+    const connectionText =
+      document.getElementById(
+        "connection-text"
+      );
 
-    let percent =
-      ((DRY_ADC - adc) /
-      (DRY_ADC - WET_ADC)) * 100;
+    const statusDot =
+      document.getElementById(
+        "status-dot"
+      );
 
-    percent = Math.max(0, Math.min(100, percent));
+    const statusPing =
+      document.getElementById(
+        "status-ping"
+      );
 
-    return Math.round(percent);
+    const statusText =
+      document.getElementById(
+        "system-status"
+      );
+
+
+    if (online) {
+
+      connectionDot.className =
+        "w-2.5 h-2.5 rounded-full bg-emerald-400";
+
+      connectionText.innerText =
+        "Live telemetry connected";
+
+      statusDot.className =
+        "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
+
+      statusPing.className =
+        "absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping";
+
+      statusText.innerText =
+        "ONLINE";
+
+      statusText.className =
+        "text-xs font-bold uppercase tracking-[.18em] text-emerald-300";
+    }
+
+    else {
+
+      connectionDot.className =
+        "w-2.5 h-2.5 rounded-full bg-rose-400";
+
+      connectionText.innerText =
+        "Backend / ESP disconnected";
+
+      statusDot.className =
+        "relative inline-flex rounded-full h-3 w-3 bg-rose-500";
+
+      statusPing.className =
+        "absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-60 animate-ping";
+
+      statusText.innerText =
+        "OFFLINE";
+
+      statusText.className =
+        "text-xs font-bold uppercase tracking-[.18em] text-rose-300";
+    }
   }
 
 
@@ -1240,86 +2227,162 @@
 
       return {
         text: "CRITICAL • VERY DRY",
-        cls: "text-rose-400"
+        className: "text-rose-400"
       };
     }
+
 
     if (percent < 45) {
 
       return {
         text: "DRY • NEEDS WATER",
-        cls: "text-orange-300"
+        className: "text-orange-300"
       };
     }
 
-    if (percent < 65) {
+
+    if (percent < SOIL_TARGET) {
 
       return {
-        text: "MOIST • APPROACHING TARGET",
-        cls: "text-amber-300"
+        text: "MOIST • BELOW TARGET",
+        className: "text-amber-300"
       };
     }
+
 
     if (percent < 85) {
 
       return {
         text: "OPTIMAL • WELL WATERED",
-        cls: "text-emerald-300"
+        className: "text-emerald-300"
       };
     }
 
+
     return {
-      text: "VERY WET • STOP WATERING",
-      cls: "text-cyan-300"
+      text: "VERY WET",
+      className: "text-cyan-300"
     };
   }
 
 
   // ====================================================
-  // UPDATE SOIL INTELLIGENCE
+  // UPDATE SOIL
   // ====================================================
 
-  function updateSoil(soilRaw, serverPercent = null) {
+  function updateSoil(
+    soilRaw,
+    serverPercent
+  ) {
 
-    const percent =
-      Number.isFinite(Number(serverPercent))
-      ? Number(serverPercent)
-      : soilPercentFromADC(soilRaw);
+    let percent;
+
+
+    if (
+      serverPercent !== null &&
+      serverPercent !== undefined &&
+      Number.isFinite(
+        Number(serverPercent)
+      )
+    ) {
+
+      percent =
+        Number(serverPercent);
+
+    } else {
+
+      /*
+        Fallback calibration.
+
+        High ADC = dry
+        Low ADC  = wet
+      */
+
+      const DRY_ADC = 900;
+      const WET_ADC = 300;
+
+      percent =
+        (
+          (DRY_ADC - soilRaw) /
+          (DRY_ADC - WET_ADC)
+        ) * 100;
+
+      percent =
+        Math.round(
+          Math.max(
+            0,
+            Math.min(
+              100,
+              percent
+            )
+          )
+        );
+    }
+
+
+    percent =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          percent
+        )
+      );
+
+
+    latestSoilPercent =
+      percent;
+
 
     setReading(
       "soil-percent",
-      percent,
+      Math.round(percent),
       previousData.soil
     );
 
-    setReading(
-      "soil-raw",
-      soilRaw,
-      previousData.soil
-    );
 
-    setReading(
-      "soil-current-large",
-      percent + "%",
-      null
-    );
+    document.getElementById(
+      "soil-raw"
+    ).innerText =
+      soilRaw;
 
-    document.getElementById("soil-bar").style.width =
+
+    document.getElementById(
+      "soil-current-large"
+    ).innerText =
+      Math.round(percent) + "%";
+
+
+    document.getElementById(
+      "soil-bar"
+    ).style.width =
       percent + "%";
 
 
-    const status = getSoilStatus(percent);
+    // ----------------------------
+    // STATUS
+    // ----------------------------
 
-    const statusEl =
-      document.getElementById("soil-status");
+    const status =
+      getSoilStatus(percent);
 
-    statusEl.innerText = status.text;
+    const statusElement =
+      document.getElementById(
+        "soil-status"
+      );
 
-    statusEl.className =
-      "font-bold " + status.cls;
+    statusElement.innerText =
+      status.text;
+
+    statusElement.className =
+      "font-bold " + status.className;
 
 
-    const progress =
+    // ----------------------------
+    // TARGET PROGRESS
+    // ----------------------------
+
+    const targetProgress =
       Math.min(
         100,
         Math.max(
@@ -1328,64 +2391,80 @@
         )
       );
 
+
     document.getElementById(
       "soil-progress"
-    ).style.width = progress + "%";
+    ).style.width =
+      targetProgress + "%";
+
 
     document.getElementById(
       "soil-progress-label"
     ).innerText =
-      Math.round(progress) + "%";
+      Math.round(targetProgress) + "%";
 
 
-    const deficit =
-      Math.max(0, SOIL_TARGET - percent);
+    // ----------------------------
+    // MOISTURE GAP
+    // ----------------------------
+
+    const gap =
+      Math.max(
+        0,
+        SOIL_TARGET - percent
+      );
+
 
     document.getElementById(
       "water-needed"
     ).innerText =
-      deficit > 0
-      ? deficit + "% moisture"
-      : "None";
+      gap > 0
+        ? gap + "%"
+        : "None";
+
+
+    // ----------------------------
+    // STOP CONDITION
+    // ----------------------------
+
+    const stopElement =
+      document.getElementById(
+        "stop-condition"
+      );
 
 
     if (percent >= SOIL_TARGET) {
 
-      document.getElementById(
-        "stop-condition"
-      ).innerText =
+      stopElement.innerText =
         "TARGET REACHED";
 
-      document.getElementById(
-        "stop-condition"
-      ).className =
+      stopElement.className =
         "text-sm font-bold mt-2 text-emerald-300";
 
     } else {
 
-      document.getElementById(
-        "stop-condition"
-      ).innerText =
+      stopElement.innerText =
         "KEEP WATERING";
 
-      document.getElementById(
-        "stop-condition"
-      ).className =
+      stopElement.className =
         "text-sm font-bold mt-2 text-amber-300";
     }
 
 
-    /*
-      If pump is running, track how much the
-      soil has improved since watering started.
-    */
+    // ----------------------------
+    // WATERING RESPONSE
+    // ----------------------------
 
     if (isPumpOn) {
 
-      if (wateringStartSoil === null) {
+      if (
+        wateringStartSoil === null
+      ) {
 
-        wateringStartSoil = percent;
+        wateringStartSoil =
+          percent;
       }
+
 
       const improvement =
         Math.max(
@@ -1393,45 +2472,51 @@
           percent - wateringStartSoil
         );
 
+
       document.getElementById(
         "soil-change"
       ).innerText =
-        "+" + improvement + "%";
+        "+" +
+        Math.round(improvement) +
+        "%";
+
 
       document.getElementById(
         "watering-message"
       ).innerText =
         percent >= SOIL_TARGET
-        ? "Target moisture reached. Pump should stop."
-        : "Watering is improving soil moisture. Monitoring continuously...";
+          ? "Soil target reached. AUTO logic will stop irrigation."
+          : "Pump is watering while soil moisture is being monitored.";
     }
 
     else {
 
       document.getElementById(
-        "watering-message"
+        "soil-change"
       ).innerText =
-        percent >= SOIL_TARGET
-        ? "Soil is currently above the watering target."
-        : "Soil is below the target. AI may request irrigation.";
+        "0%";
     }
+
 
     return percent;
   }
 
 
   // ====================================================
-  // UPDATE RAIN
+  // RAIN
   // ====================================================
 
-  function updateRain(raining, raw) {
+  function updateRain(
+    raining,
+    raw
+  ) {
 
-    const rainText =
+    const status =
       document.getElementById(
         "rain-status"
       );
 
-    const rainBox =
+    const box =
       document.getElementById(
         "rain-icon-box"
       );
@@ -1439,147 +2524,228 @@
     document.getElementById(
       "rain-raw"
     ).innerText =
-      "Raw: " + (raw ?? "--");
+      "Raw: " +
+      (
+        raw !== undefined &&
+        raw !== null
+          ? raw
+          : "--"
+      );
 
 
     if (raining === true) {
 
-      rainText.innerText = "RAINING";
+      status.innerText =
+        "RAINING";
 
-      rainText.className =
+      status.className =
         "text-3xl sm:text-4xl font-black mt-3 text-cyan-300";
 
-      rainBox.className =
+      box.className =
         "w-11 h-11 rounded-2xl bg-cyan-400/15 border border-cyan-400/30 flex items-center justify-center text-cyan-300";
 
+
+      document.getElementById(
+        "water-status"
+      ).innerText =
+        "Rain protection active";
+
     }
+
 
     else if (raining === false) {
 
-      rainText.innerText = "NO RAIN";
+      status.innerText =
+        "NO RAIN";
 
-      rainText.className =
+      status.className =
         "text-3xl sm:text-4xl font-black mt-3 text-amber-300";
 
-      rainBox.className =
+      box.className =
         "w-11 h-11 rounded-2xl bg-amber-400/10 border border-amber-400/15 flex items-center justify-center text-amber-300";
+
+
+      document.getElementById(
+        "water-status"
+      ).innerText =
+        "Irrigation protected";
     }
+
 
     else {
 
-      rainText.innerText = "--";
+      status.innerText =
+        "--";
 
-      rainText.className =
+      status.className =
         "text-3xl sm:text-4xl font-black mt-3 text-slate-500";
     }
   }
 
 
   // ====================================================
-  // UPDATE PUMP VISUAL
+  // PUMP VISUAL
   // ====================================================
 
   function updatePumpVisual() {
 
-    const pumpIcon =
-      document.getElementById("pump-icon");
+    const icon =
+      document.getElementById(
+        "pump-icon"
+      );
 
-    const pumpWrap =
-      document.getElementById("pump-icon-wrap");
+    const wrap =
+      document.getElementById(
+        "pump-icon-wrap"
+      );
 
-    const pumpRing =
-      document.getElementById("pump-ring");
-
-    const mini =
-      document.getElementById("pump-state-mini");
+    const ring =
+      document.getElementById(
+        "pump-ring"
+      );
 
     const state =
-      document.getElementById("pump-state");
+      document.getElementById(
+        "pump-state"
+      );
+
+    const mini =
+      document.getElementById(
+        "pump-state-mini"
+      );
 
 
     if (isPumpOn) {
 
-      pumpIcon.classList.add("pump-spin");
+      icon.classList.add(
+        "pump-spin"
+      );
 
-      pumpWrap.className =
-        "relative w-24 h-24 rounded-3xl bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center text-emerald-300 pump-glow";
 
-      pumpRing.className =
-        "absolute inset-4 rounded-full border border-emerald-400/20 animate-pulse";
+      wrap.className =
+        "relative w-28 h-28 rounded-[2rem] bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center text-emerald-300 pump-glow";
 
-      mini.innerText = "ON";
+
+      ring.className =
+        "absolute inset-5 rounded-full border border-emerald-400/20 animate-pulse";
+
+
+      state.innerText =
+        "ON";
+
+      state.className =
+        "text-2xl font-black mt-1 text-emerald-300";
+
+
+      mini.innerText =
+        "ON";
 
       mini.className =
         "px-3 py-1.5 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-xs font-bold text-emerald-300";
-
-      state.innerText = "ON";
-
-      state.className =
-        "text-xl font-black mt-1 text-emerald-300";
     }
+
 
     else {
 
-      pumpIcon.classList.remove("pump-spin");
+      icon.classList.remove(
+        "pump-spin"
+      );
 
-      pumpWrap.className =
-        "relative w-24 h-24 rounded-3xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500";
 
-      pumpRing.className =
-        "absolute inset-4 rounded-full border border-slate-700/80";
+      wrap.className =
+        "relative w-28 h-28 rounded-[2rem] bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500";
 
-      mini.innerText = "OFF";
 
-      mini.className =
-        "px-3 py-1.5 rounded-full bg-slate-800/70 border border-slate-700 text-xs font-bold text-slate-500";
+      ring.className =
+        "absolute inset-5 rounded-full border border-slate-700/80";
 
-      state.innerText = "OFF";
+
+      state.innerText =
+        "OFF";
 
       state.className =
-        "text-xl font-black mt-1 text-slate-500";
+        "text-2xl font-black mt-1 text-slate-500";
+
+
+      mini.innerText =
+        "OFF";
+
+      mini.className =
+        "px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs font-bold text-slate-500";
     }
   }
 
 
   // ====================================================
-  // PUMP RUNTIME
+  // PUMP BUTTON
   // ====================================================
 
-  function updateRuntime() {
+  function updatePumpButton() {
 
-    if (!wateringStartTime || !isPumpOn) {
+    const button =
+      document.getElementById(
+        "pump-button"
+      );
 
-      if (!wateringStartTime) {
 
-        document.getElementById(
-          "pump-runtime"
-        ).innerText = "00:00";
-      }
+    if (
+      currentMode === "AUTO"
+    ) {
+
+      button.disabled =
+        true;
+
+      button.className =
+        "press w-full py-5 rounded-2xl bg-slate-800 text-slate-500 border border-slate-700 font-black text-lg cursor-not-allowed";
+
+      button.innerHTML =
+        `
+        <span class="flex items-center justify-center gap-3">
+          <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+          AI CONTROL ACTIVE
+        </span>
+        `;
 
       return;
     }
 
 
-    const seconds =
-      Math.floor(
-        (Date.now() - wateringStartTime) / 1000
-      );
+    button.disabled =
+      false;
 
-    const minutes =
-      Math.floor(seconds / 60);
 
-    const secs =
-      seconds % 60;
+    if (isPumpOn) {
 
-    document.getElementById(
-      "pump-runtime"
-    ).innerText =
-      String(minutes).padStart(2, "0") +
-      ":" +
-      String(secs).padStart(2, "0");
+      button.className =
+        "press w-full py-5 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 text-white border border-rose-400/40 font-black text-lg shadow-xl shadow-rose-500/10";
+
+      button.innerHTML =
+        `
+        <span class="flex items-center justify-center gap-3">
+          <i data-lucide="power-off" class="w-6 h-6"></i>
+          TURN PUMP OFF
+        </span>
+        `;
+
+    }
+
+    else {
+
+      button.className =
+        "press w-full py-5 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 border border-emerald-300/40 font-black text-lg shadow-xl shadow-emerald-500/10";
+
+      button.innerHTML =
+        `
+        <span class="flex items-center justify-center gap-3">
+          <i data-lucide="power" class="w-6 h-6"></i>
+          TURN PUMP ON
+        </span>
+        `;
+    }
+
+
+    lucide.createIcons();
   }
-
-  setInterval(updateRuntime, 1000);
 
 
   // ====================================================
@@ -1588,118 +2754,70 @@
 
   function updateModeUI() {
 
-    const autoBtn =
-      document.getElementById("auto-btn");
+    const auto =
+      document.getElementById(
+        "auto-btn"
+      );
 
-    const manualBtn =
-      document.getElementById("manual-btn");
-
-    const pumpBtn =
-      document.getElementById("pump-button");
-
-    const modeLabel =
-      document.getElementById("mode-label");
+    const manual =
+      document.getElementById(
+        "manual-btn"
+      );
 
     const description =
-      document.getElementById("control-description");
+      document.getElementById(
+        "control-description"
+      );
 
     const help =
-      document.getElementById("manual-help");
+      document.getElementById(
+        "manual-help"
+      );
 
 
-    modeLabel.innerText =
+    document.getElementById(
+      "mode-label"
+    ).innerText =
       currentMode;
 
 
     if (currentMode === "AUTO") {
 
-      autoBtn.className =
-        "pressable flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950";
+      auto.className =
+        "press flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950";
 
-      manualBtn.className =
-        "pressable flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold text-slate-500";
+      manual.className =
+        "press flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold text-slate-500";
 
 
       description.innerText =
-        "AI controls irrigation automatically using the live sensor data and ML model.";
-
-
-      pumpBtn.disabled = true;
-
-      pumpBtn.className =
-        "pressable w-full py-5 rounded-2xl bg-slate-800 text-slate-500 border border-slate-700 font-black text-lg cursor-not-allowed";
-
-      pumpBtn.innerHTML =
-        `<span class="flex items-center justify-center gap-3">
-          <i data-lucide="brain-circuit" class="w-5 h-5"></i>
-          AI CONTROL ACTIVE
-        </span>`;
+        "Random Forest AI controls irrigation using live telemetry.";
 
 
       help.innerText =
-        "Switch to MANUAL when you want direct ON/OFF control from this dashboard.";
+        "AUTO mode uses rain protection and stops irrigation when the soil target is reached.";
     }
 
 
     else {
 
-      manualBtn.className =
-        "pressable flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold bg-slate-100 text-slate-950";
+      manual.className =
+        "press flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold bg-slate-100 text-slate-950";
 
-      autoBtn.className =
-        "pressable flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold text-slate-500";
+      auto.className =
+        "press flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold text-slate-500";
 
 
       description.innerText =
-        "Manual override is active. Use the button below to control the pump.";
-
-
-      pumpBtn.disabled = false;
-
-      updateManualPumpButton();
+        "Manual override is active. You control the pump directly.";
 
 
       help.innerText =
-        "Manual commands are sent to the server and then delivered to the ESP8266.";
+        "The ML model is ignored in MANUAL mode. Use the button to turn the pump ON or OFF.";
     }
 
-    lucide.createIcons();
-  }
 
-
-  // ====================================================
-  // MANUAL PUMP BUTTON
-  // ====================================================
-
-  function updateManualPumpButton() {
-
-    const pumpBtn =
-      document.getElementById("pump-button");
-
-
-    if (isPumpOn) {
-
-      pumpBtn.className =
-        "pressable w-full py-5 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 text-white border border-rose-400/40 font-black text-lg shadow-xl shadow-rose-500/10";
-
-      pumpBtn.innerHTML =
-        `<span class="flex items-center justify-center gap-3">
-          <i data-lucide="power-off" class="w-6 h-6"></i>
-          TURN PUMP OFF
-        </span>`;
-    }
-
-    else {
-
-      pumpBtn.className =
-        "pressable w-full py-5 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 border border-emerald-300/40 font-black text-lg shadow-xl shadow-emerald-500/10";
-
-      pumpBtn.innerHTML =
-        `<span class="flex items-center justify-center gap-3">
-          <i data-lucide="power" class="w-6 h-6"></i>
-          TURN PUMP ON
-        </span>`;
-    }
+    updatePumpButton();
 
     lucide.createIcons();
   }
@@ -1711,12 +2829,20 @@
 
   async function setMode(mode) {
 
-    currentMode = mode;
+    if (mode === currentMode) {
+      return;
+    }
+
+
+    currentMode =
+      mode;
+
 
     updateModeUI();
 
+
     addLog(
-      "Mode changed to " + mode
+      "Switching to " + mode + " mode..."
     );
 
 
@@ -1729,7 +2855,8 @@
             method: "POST",
 
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type":
+                "application/json"
             },
 
             body: JSON.stringify({
@@ -1739,19 +2866,36 @@
         );
 
 
+      const data =
+        await response.json();
+
+
       if (!response.ok) {
 
         addLog(
-          "Mode request failed: HTTP " +
-          response.status
+          "Mode change failed."
         );
 
         return;
       }
 
 
+      if (data.pump_active !== undefined) {
+
+        isPumpOn =
+          Boolean(
+            data.pump_active
+          );
+
+        updatePumpVisual();
+
+        updatePumpButton();
+      }
+
+
       addLog(
-        "Server accepted " + mode + " mode."
+        "Mode: " +
+        mode
       );
 
     }
@@ -1759,34 +2903,39 @@
     catch (error) {
 
       addLog(
-        "Mode communication failed."
+        "Mode request failed."
       );
     }
   }
 
 
   // ====================================================
-  // TOGGLE PUMP
+  // PUMP COMMAND
   // ====================================================
 
   async function togglePump() {
 
-    if (currentMode !== "MANUAL") {
+    if (
+      currentMode !== "MANUAL"
+    ) {
       return;
     }
 
 
-    const requestedState =
+    const desired =
       !isPumpOn;
 
+
     const command =
-      requestedState
-      ? "PUMP_ON"
-      : "PUMP_OFF";
+      desired
+        ? "PUMP_ON"
+        : "PUMP_OFF";
 
 
     addLog(
-      "Sending " + command + "..."
+      "Sending " +
+      command +
+      "..."
     );
 
 
@@ -1799,7 +2948,8 @@
             method: "POST",
 
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type":
+                "application/json"
             },
 
             body: JSON.stringify({
@@ -1809,25 +2959,46 @@
         );
 
 
+      const data =
+        await response.json();
+
+
       if (!response.ok) {
 
         addLog(
-          "Pump command failed: HTTP " +
-          response.status
+          "Pump command failed."
         );
 
         return;
       }
 
 
-      /*
-        Optimistic UI update.
-        The server telemetry will later confirm
-        the physical state.
-      */
+      if (
+        data.status === "blocked"
+      ) {
 
-      isPumpOn =
-        requestedState;
+        addLog(
+          "Pump command blocked: switch to MANUAL."
+        );
+
+        return;
+      }
+
+
+      if (
+        data.pump_active !== undefined
+      ) {
+
+        isPumpOn =
+          Boolean(
+            data.pump_active
+          );
+
+      } else {
+
+        isPumpOn =
+          desired;
+      }
 
 
       if (isPumpOn) {
@@ -1836,16 +3007,20 @@
           Date.now();
 
         wateringStartSoil =
-          null;
+          latestSoilPercent;
 
         addLog(
           "Manual pump ON requested."
         );
+
       }
 
       else {
 
         wateringStartTime =
+          null;
+
+        wateringStartSoil =
           null;
 
         addLog(
@@ -1856,7 +3031,7 @@
 
       updatePumpVisual();
 
-      updateModeUI();
+      updatePumpButton();
 
     }
 
@@ -1870,290 +3045,19 @@
 
 
   // ====================================================
-  // UPDATE TELEMETRY
+  // FETCH TELEMETRY
   // ====================================================
 
-  function updateTelemetry(data) {
+  async function fetchLiveFeed() {
 
-    if (!data) {
+    if (telemetryBusy) {
       return;
     }
 
 
-    // ---------------------------------------------
-    // Temperature
-    // ---------------------------------------------
+    telemetryBusy =
+      true;
 
-    const temperature =
-      Number(data.temperature);
-
-    if (Number.isFinite(temperature)) {
-
-      setReading(
-        "temp-val",
-        temperature.toFixed(1),
-        previousData.temperature
-      );
-
-      const tempPercent =
-        Math.min(
-          100,
-          Math.max(
-            0,
-            (temperature / 50) * 100
-          )
-        );
-
-      document.getElementById(
-        "temp-bar"
-      ).style.width =
-        tempPercent + "%";
-    }
-
-
-    // ---------------------------------------------
-    // Humidity
-    // ---------------------------------------------
-
-    const humidity =
-      Number(data.humidity);
-
-    if (Number.isFinite(humidity)) {
-
-      setReading(
-        "hum-val",
-        humidity.toFixed(1),
-        previousData.humidity
-      );
-
-      document.getElementById(
-        "hum-bar"
-      ).style.width =
-        Math.min(100, Math.max(0, humidity))
-        + "%";
-    }
-
-
-    // ---------------------------------------------
-    // Soil
-    // ---------------------------------------------
-
-    const soilRaw =
-      Number(data.soil);
-
-    let soilPercent = null;
-
-
-    if (Number.isFinite(data.soil_percent)) {
-
-      soilPercent =
-        Number(data.soil_percent);
-    }
-
-
-    if (Number.isFinite(soilRaw)) {
-
-      soilPercent =
-        updateSoil(
-          soilRaw,
-          soilPercent
-        );
-    }
-
-
-    // ---------------------------------------------
-    // Rain
-    // ---------------------------------------------
-
-    let raining = null;
-
-
-    if (typeof data.raining === "boolean") {
-
-      raining =
-        data.raining;
-    }
-
-    else if (
-      data.raining === "true" ||
-      data.raining === "false"
-    ) {
-
-      raining =
-        data.raining === "true";
-    }
-
-
-    updateRain(
-      raining,
-      data.rain_raw
-    );
-
-
-    // ---------------------------------------------
-    // PUMP STATE
-    // ---------------------------------------------
-
-    if (typeof data.pump_active === "boolean") {
-
-      const newPumpState =
-        data.pump_active;
-
-
-      if (
-        lastPumpServerState !== null &&
-        lastPumpServerState !== newPumpState
-      ) {
-
-        addLog(
-          "Physical pump state: " +
-          (newPumpState ? "ON" : "OFF")
-        );
-      }
-
-
-      lastPumpServerState =
-        newPumpState;
-
-
-      /*
-        Server is source of truth.
-
-        In AUTO and MANUAL, the dashboard
-        follows the actual server state.
-      */
-
-      isPumpOn =
-        newPumpState;
-
-
-      if (isPumpOn && !wateringStartTime) {
-
-        wateringStartTime =
-          Date.now();
-      }
-
-
-      if (!isPumpOn) {
-
-        wateringStartTime =
-          null;
-
-        wateringStartSoil =
-          null;
-      }
-
-
-      updatePumpVisual();
-
-      if (currentMode === "MANUAL") {
-        updateManualPumpButton();
-      }
-    }
-
-
-    // ---------------------------------------------
-    // ML DECISION
-    // ---------------------------------------------
-
-    if (data.ai_decision) {
-
-      const decision =
-        String(data.ai_decision)
-        .toUpperCase();
-
-      document.getElementById(
-        "ai-decision"
-      ).innerText =
-        decision;
-
-      document.getElementById(
-        "ai-badge"
-      ).innerText =
-        decision;
-
-
-      if (decision.includes("ON")) {
-
-        document.getElementById(
-          "ai-decision"
-        ).className =
-          "text-2xl font-black text-emerald-300";
-
-      }
-
-      else if (decision.includes("OFF")) {
-
-        document.getElementById(
-          "ai-decision"
-        ).className =
-          "text-2xl font-black text-rose-300";
-      }
-
-
-    }
-
-
-    if (data.ai_reason) {
-
-      document.getElementById(
-        "ai-reason"
-      ).innerText =
-        data.ai_reason;
-    }
-
-
-    if (data.recommended_action) {
-
-      document.getElementById(
-        "recommended-action"
-      ).innerText =
-        data.recommended_action;
-    }
-
-
-    if (data.model_status) {
-
-      document.getElementById(
-        "model-status"
-      ).innerText =
-        data.model_status;
-    }
-
-
-    previousData = {
-      temperature:
-        Number.isFinite(temperature)
-        ? temperature
-        : previousData.temperature,
-
-      humidity:
-        Number.isFinite(humidity)
-        ? humidity
-        : previousData.humidity,
-
-      soil:
-        Number.isFinite(soilRaw)
-        ? soilRaw
-        : previousData.soil,
-
-      raining:
-        raining
-    };
-
-
-    document.getElementById(
-      "last-update"
-    ).innerText =
-      new Date().toLocaleTimeString();
-  }
-
-
-  // ====================================================
-  // FETCH LIVE DATA
-  // ====================================================
-
-  async function fetchLiveFeed() {
 
     try {
 
@@ -2161,6 +3065,7 @@
         await fetch(
           "/api/telemetry",
           {
+            method: "GET",
             cache: "no-store"
           }
         );
@@ -2180,119 +3085,509 @@
 
       setConnection(true);
 
-      updateTelemetry(data);
+      processTelemetry(data);
 
     }
 
     catch (error) {
 
       setConnection(false);
+
+    }
+
+    finally {
+
+      telemetryBusy =
+        false;
     }
   }
 
 
   // ====================================================
-  // CONNECTION STATUS
+  // PROCESS TELEMETRY
   // ====================================================
 
-  function setConnection(connected) {
+  function processTelemetry(data) {
 
-    const dot =
-      document.getElementById(
-        "connection-dot"
-      );
-
-    const statusDot =
-      document.getElementById(
-        "status-dot"
-      );
-
-    const ping =
-      document.getElementById(
-        "status-ping"
-      );
-
-    const text =
-      document.getElementById(
-        "connection-text"
-      );
-
-    const status =
-      document.getElementById(
-        "system-status"
-      );
-
-
-    if (connected) {
-
-      dot.className =
-        "w-2.5 h-2.5 rounded-full bg-emerald-400";
-
-      statusDot.className =
-        "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
-
-      ping.className =
-        "absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping";
-
-      text.innerText =
-        "Live telemetry connected";
-
-      status.innerText =
-        "Online";
-
-      status.className =
-        "text-xs font-bold uppercase tracking-[.18em] text-emerald-300";
+    if (!data) {
+      return;
     }
 
-    else {
 
-      dot.className =
-        "w-2.5 h-2.5 rounded-full bg-rose-400";
+    // ==================================================
+    // MODE
+    // ==================================================
 
-      statusDot.className =
-        "relative inline-flex rounded-full h-3 w-3 bg-rose-500";
+    if (
+      data.mode === "AUTO" ||
+      data.mode === "MANUAL"
+    ) {
 
-      ping.className =
-        "absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-60 animate-ping";
+      currentMode =
+        data.mode;
 
-      text.innerText =
-        "Backend / ESP disconnected";
-
-      status.innerText =
-        "Offline";
-
-      status.className =
-        "text-xs font-bold uppercase tracking-[.18em] text-rose-300";
+      updateModeUI();
     }
+
+
+    // ==================================================
+    // TEMPERATURE
+    // ==================================================
+
+    const temperature =
+      Number(
+        data.temperature
+      );
+
+
+    if (
+      Number.isFinite(
+        temperature
+      )
+    ) {
+
+      setReading(
+        "temp-val",
+        temperature.toFixed(1),
+        previousData.temperature
+      );
+
+
+      const tempPercent =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            (temperature / 50) * 100
+          )
+        );
+
+
+      document.getElementById(
+        "temp-bar"
+      ).style.width =
+        tempPercent + "%";
+    }
+
+
+    // ==================================================
+    // HUMIDITY
+    // ==================================================
+
+    const humidity =
+      Number(
+        data.humidity
+      );
+
+
+    if (
+      Number.isFinite(
+        humidity
+      )
+    ) {
+
+      setReading(
+        "hum-val",
+        humidity.toFixed(1),
+        previousData.humidity
+      );
+
+
+      document.getElementById(
+        "hum-bar"
+      ).style.width =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            humidity
+          )
+        ) + "%";
+    }
+
+
+    // ==================================================
+    // SOIL
+    // ==================================================
+
+    const soilRaw =
+      Number(
+        data.soil
+      );
+
+
+    if (
+      Number.isFinite(
+        soilRaw
+      )
+    ) {
+
+      updateSoil(
+        soilRaw,
+        data.soil_percent
+      );
+    }
+
+
+    // ==================================================
+    // RAIN
+    // ==================================================
+
+    let raining = null;
+
+
+    if (
+      typeof data.raining ===
+      "boolean"
+    ) {
+
+      raining =
+        data.raining;
+
+    }
+    else if (
+      data.raining === "true" ||
+      data.raining === "false"
+    ) {
+
+      raining =
+        data.raining === "true";
+    }
+
+
+    updateRain(
+      raining,
+      data.rain_raw
+    );
+
+
+    // ==================================================
+    // PUMP STATE
+    // ==================================================
+
+    if (
+      typeof data.pump_active ===
+      "boolean"
+    ) {
+
+      const newState =
+        data.pump_active;
+
+
+      if (
+        lastPumpState !== null &&
+        lastPumpState !== newState
+      ) {
+
+        addLog(
+          "Physical pump state: " +
+          (
+            newState
+              ? "ON"
+              : "OFF"
+          )
+        );
+      }
+
+
+      lastPumpState =
+        newState;
+
+
+      if (
+        isPumpOn !== newState
+      ) {
+
+        isPumpOn =
+          newState;
+      }
+
+
+      if (
+        isPumpOn &&
+        wateringStartTime === null
+      ) {
+
+        wateringStartTime =
+          Date.now();
+
+        wateringStartSoil =
+          latestSoilPercent;
+      }
+
+
+      if (!isPumpOn) {
+
+        wateringStartTime =
+          null;
+
+        wateringStartSoil =
+          null;
+
+        document.getElementById(
+          "soil-change"
+        ).innerText =
+          "0%";
+      }
+
+
+      updatePumpVisual();
+
+      updatePumpButton();
+    }
+
+
+    // ==================================================
+    // AI DECISION
+    // ==================================================
+
+    if (
+      data.ai_decision !==
+      undefined &&
+      data.ai_decision !== null
+    ) {
+
+      const decision =
+        String(
+          data.ai_decision
+        ).toUpperCase();
+
+
+      document.getElementById(
+        "ai-decision"
+      ).innerText =
+        decision;
+
+
+      document.getElementById(
+        "ai-badge"
+      ).innerText =
+        decision;
+
+
+      if (
+        decision.includes(
+          "PUMP_ON"
+        ) ||
+        decision === "ON"
+      ) {
+
+        document.getElementById(
+          "ai-decision"
+        ).className =
+          "text-2xl font-black text-emerald-300";
+
+      }
+
+      else if (
+        decision.includes(
+          "PUMP_OFF"
+        ) ||
+        decision === "OFF"
+      ) {
+
+        document.getElementById(
+          "ai-decision"
+        ).className =
+          "text-2xl font-black text-rose-300";
+
+      }
+
+      else {
+
+        document.getElementById(
+          "ai-decision"
+        ).className =
+          "text-2xl font-black text-violet-300";
+      }
+    }
+
+
+    // ==================================================
+    // AI REASON
+    // ==================================================
+
+    if (
+      data.ai_reason !==
+      undefined &&
+      data.ai_reason !== null
+    ) {
+
+      document.getElementById(
+        "ai-reason"
+      ).innerText =
+        data.ai_reason;
+    }
+
+
+    // ==================================================
+    // RECOMMENDED ACTION
+    // ==================================================
+
+    if (
+      data.recommended_action !==
+      undefined &&
+      data.recommended_action !== null
+    ) {
+
+      document.getElementById(
+        "recommended-action"
+      ).innerText =
+        data.recommended_action;
+    }
+
+
+    // ==================================================
+    // MODEL STATUS
+    // ==================================================
+
+    if (
+      data.model_status !==
+      undefined &&
+      data.model_status !== null
+    ) {
+
+      document.getElementById(
+        "model-status"
+      ).innerText =
+        data.model_status;
+    }
+
+
+    // ==================================================
+    // PREVIOUS DATA
+    // ==================================================
+
+    previousData = {
+
+      temperature:
+        Number.isFinite(
+          temperature
+        )
+          ? temperature
+          : previousData.temperature,
+
+      humidity:
+        Number.isFinite(
+          humidity
+        )
+          ? humidity
+          : previousData.humidity,
+
+      soil:
+        Number.isFinite(
+          soilRaw
+        )
+          ? soilRaw
+          : previousData.soil,
+
+      raining:
+        raining
+    };
+
+
+    // ==================================================
+    // LAST UPDATE
+    // ==================================================
+
+    document.getElementById(
+      "last-update"
+    ).innerText =
+      new Date()
+        .toLocaleTimeString();
   }
 
 
   // ====================================================
-  // LOGS
+  // PUMP RUNTIME
+  // ====================================================
+
+  function updateRuntime() {
+
+    const runtime =
+      document.getElementById(
+        "pump-runtime"
+      );
+
+
+    if (
+      !isPumpOn ||
+      wateringStartTime === null
+    ) {
+
+      runtime.innerText =
+        "00:00";
+
+      return;
+    }
+
+
+    const totalSeconds =
+      Math.floor(
+        (
+          Date.now() -
+          wateringStartTime
+        ) / 1000
+      );
+
+
+    const minutes =
+      Math.floor(
+        totalSeconds / 60
+      );
+
+
+    const seconds =
+      totalSeconds % 60;
+
+
+    runtime.innerText =
+      String(minutes)
+        .padStart(2, "0")
+      +
+      ":" +
+      String(seconds)
+        .padStart(2, "0");
+  }
+
+
+  setInterval(
+    updateRuntime,
+    1000
+  );
+
+
+  // ====================================================
+  // LOGGING
   // ====================================================
 
   function addLog(message) {
 
     const logs =
-      document.getElementById("logs");
-
-
-    const time =
-      new Date().toLocaleTimeString();
+      document.getElementById(
+        "logs"
+      );
 
 
     const row =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
 
     row.className =
       "rounded-xl bg-slate-950/40 border border-white/5 px-4 py-3 flex items-start gap-3";
 
 
+    const time =
+      new Date()
+        .toLocaleTimeString();
+
+
     row.innerHTML =
       `
         <span class="text-[10px] text-slate-600 whitespace-nowrap">
-          ${time}
+          ${escapeHTML(time)}
         </span>
 
         <span class="text-xs text-slate-400">
@@ -2304,7 +3599,9 @@
     logs.prepend(row);
 
 
-    while (logs.children.length > 30) {
+    while (
+      logs.children.length > 30
+    ) {
 
       logs.removeChild(
         logs.lastChild
@@ -2317,28 +3614,46 @@
 
     document.getElementById(
       "logs"
-    ).innerHTML = "";
+    ).innerHTML =
+      "";
   }
 
 
-  function escapeHTML(text) {
+  function escapeHTML(value) {
 
-    return String(text)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+    return String(value)
+      .replaceAll(
+        "&",
+        "&amp;"
+      )
+      .replaceAll(
+        "<",
+        "&lt;"
+      )
+      .replaceAll(
+        ">",
+        "&gt;"
+      )
+      .replaceAll(
+        '"',
+        "&quot;"
+      )
+      .replaceAll(
+        "'",
+        "&#039;"
+      );
   }
 
 
   // ====================================================
-  // INITIAL MODE
+  // INITIAL UI
   // ====================================================
 
   updateModeUI();
 
   updatePumpVisual();
+
+  updatePumpButton();
 
 </script>
 
