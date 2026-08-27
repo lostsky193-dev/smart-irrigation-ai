@@ -14,71 +14,58 @@ warnings.filterwarnings("ignore")
 
 
 # =========================================================
-# 1. CONFIGURATION
+# CONFIGURATION
 # =========================================================
 
 DATASET_FILE = "irrigation_data.csv"
 
-# ---------------------------------------------------------
-# SOIL CALIBRATION
-#
-# These are DEFAULT values.
-#
-# Change these after testing your actual soil sensor.
-#
-# Example:
-# DRY_ADC = 900
-# WET_ADC = 300
-#
-# Assumption:
-# HIGH ADC = DRY
-# LOW ADC  = WET
-# ---------------------------------------------------------
-
+# Soil calibration
 DRY_ADC = 900
 WET_ADC = 300
 
-# Target soil moisture percentage
+# Soil target
 SOIL_TARGET = 65
 
-# Safety limit
-SOIL_STOP_LEVEL = 65
-
-# Do not continuously toggle the pump around the target.
-# This gives a small hysteresis zone.
-SOIL_RESTART_LEVEL = 58
+# ---------------------------------------------------------
+# Rain sensor
+#
+# Your sensor is configured as:
+#
+# 0 = RAIN
+# 1 = NO RAIN
+#
+# ESP8266 will send the correct boolean.
+# ---------------------------------------------------------
 
 
 # =========================================================
-# 2. TRAIN MACHINE LEARNING MODEL
+# TRAIN RANDOM FOREST
 # =========================================================
 
 print()
 print("==============================================")
-print("        SMART IRRIGATION AI SERVER")
+print("       EDGE-AI SMART IRRIGATION SERVER")
 print("==============================================")
-print("Booting AI Core...")
-print("Loading irrigation dataset...")
 
 try:
 
     dataset = pd.read_csv(DATASET_FILE)
 
-    required_columns = [
+    required = [
         "Temperature",
         "Humidity",
         "Soil",
         "Pump_Status"
     ]
 
-    missing_columns = [
-        col for col in required_columns
-        if col not in dataset.columns
+    missing = [
+        c for c in required
+        if c not in dataset.columns
     ]
 
-    if missing_columns:
+    if missing:
         raise ValueError(
-            f"Missing columns in CSV: {missing_columns}"
+            f"Missing CSV columns: {missing}"
         )
 
     X = dataset[
@@ -98,31 +85,29 @@ try:
 
     model.fit(X, y)
 
-    print("--> Model Trained Successfully!")
-    print(f"--> Training samples: {len(dataset)}")
-    print(f"--> Classes: {sorted(y.unique().tolist())}")
+    print("AI model trained successfully.")
+    print(f"Training rows: {len(dataset)}")
+    print(f"Classes: {sorted(y.unique().tolist())}")
 
 except Exception as e:
 
-    print()
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("ERROR LOADING / TRAINING MODEL")
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("MODEL ERROR:")
     print(e)
+
     raise
 
 
 # =========================================================
-# 3. FASTAPI
+# FASTAPI
 # =========================================================
 
 app = FastAPI(
-    title="Edge-AI Smart Irrigation Server"
+    title="Edge-AI Smart Irrigation"
 )
 
 
 # =========================================================
-# 4. SYSTEM STATE
+# GLOBAL STATE
 # =========================================================
 
 telemetry_state = {
@@ -137,7 +122,7 @@ telemetry_state = {
 
     "raining": False,
 
-    "rain_raw": 0,
+    "rain_raw": 1,
 
     "pump_active": False,
 
@@ -153,19 +138,18 @@ telemetry_state = {
 
     "model_status": "Random Forest • Active",
 
-    "last_update": 0
+    "last_update": 0,
+
+    "esp_online": False
 }
 
 
 control_state = {
 
-    # AUTO or MANUAL
     "mode": "AUTO",
 
-    # Desired command
     "pump_command": "PUMP_OFF",
 
-    # Last AI decision
     "ai_decision": "WAITING",
 
     "ai_reason": "Waiting for telemetry."
@@ -173,52 +157,27 @@ control_state = {
 
 
 # =========================================================
-# 5. PUMP STATE HELPER
+# SOIL ADC TO PERCENT
 # =========================================================
 
-def set_pump_state(command: str):
-
-    command = command.upper().strip()
-
-    if command == "PUMP_ON":
-
-        control_state["pump_command"] = "PUMP_ON"
-
-        telemetry_state["pump_active"] = True
-
-        telemetry_state["pump_command"] = "PUMP_ON"
-
-    else:
-
-        control_state["pump_command"] = "PUMP_OFF"
-
-        telemetry_state["pump_active"] = False
-
-        telemetry_state["pump_command"] = "PUMP_OFF"
-
-
-# =========================================================
-# 6. SOIL ADC -> PERCENTAGE
-# =========================================================
-
-def soil_adc_to_percent(adc_value: int) -> int:
+def soil_adc_to_percent(adc):
 
     try:
 
-        adc = float(adc_value)
-
-        # Prevent division by zero
         if DRY_ADC == WET_ADC:
             return 0
 
         percent = (
-            (DRY_ADC - adc)
+            (DRY_ADC - float(adc))
             / (DRY_ADC - WET_ADC)
-        ) * 100.0
+        ) * 100
 
         percent = max(
-            0.0,
-            min(100.0, percent)
+            0,
+            min(
+                100,
+                percent
+            )
         )
 
         return round(percent)
@@ -229,19 +188,35 @@ def soil_adc_to_percent(adc_value: int) -> int:
 
 
 # =========================================================
-# 7. NORMALIZE ML OUTPUT
+# SET PUMP STATE
 # =========================================================
 
-def ml_prediction_to_command(prediction):
+def set_pump_state(command):
 
-    """
-    Supports typical Random Forest outputs:
+    command = command.upper().strip()
 
-    1 / "1" / "ON" / "PUMP_ON" -> ON
-    0 / "0" / "OFF" / "PUMP_OFF" -> OFF
-    """
+    if command == "PUMP_ON":
 
-    value = prediction
+        control_state["pump_command"] = "PUMP_ON"
+
+        telemetry_state["pump_command"] = "PUMP_ON"
+
+        telemetry_state["pump_active"] = True
+
+    else:
+
+        control_state["pump_command"] = "PUMP_OFF"
+
+        telemetry_state["pump_command"] = "PUMP_OFF"
+
+        telemetry_state["pump_active"] = False
+
+
+# =========================================================
+# NORMALIZE ML OUTPUT
+# =========================================================
+
+def ml_to_command(value):
 
     try:
 
@@ -251,26 +226,27 @@ def ml_prediction_to_command(prediction):
     except Exception:
         pass
 
-    text = str(value).strip().upper()
+    value = str(value).strip().upper()
 
-    if text in [
+    if value in [
         "1",
-        "ON",
-        "PUMP_ON",
         "TRUE",
-        "YES"
+        "YES",
+        "ON",
+        "PUMP_ON"
     ]:
+
         return "PUMP_ON"
 
     return "PUMP_OFF"
 
 
 # =========================================================
-# 8. DASHBOARD
+# DASHBOARD
 # =========================================================
 
 @app.get("/", response_class=HTMLResponse)
-async def serve_dashboard():
+async def dashboard():
 
     with open(
         "index.html",
@@ -282,17 +258,17 @@ async def serve_dashboard():
 
 
 # =========================================================
-# 9. TELEMETRY API
+# TELEMETRY
 # =========================================================
 
 @app.get("/api/telemetry")
-async def get_telemetry():
+async def telemetry():
 
     return telemetry_state
 
 
 # =========================================================
-# 10. MODE MODEL
+# MODE
 # =========================================================
 
 class ModePayload(BaseModel):
@@ -301,16 +277,18 @@ class ModePayload(BaseModel):
 
 
 @app.post("/api/mode")
-async def update_mode(data: ModePayload):
+async def set_mode(data: ModePayload):
 
     mode = data.mode.upper().strip()
 
-    if mode not in ["AUTO", "MANUAL"]:
+    if mode not in [
+        "AUTO",
+        "MANUAL"
+    ]:
 
         return {
             "status": "error",
-            "message": "Mode must be AUTO or MANUAL.",
-            "mode": control_state["mode"]
+            "message": "Invalid mode."
         }
 
 
@@ -319,53 +297,32 @@ async def update_mode(data: ModePayload):
     telemetry_state["mode"] = mode
 
 
-    # -----------------------------------------------------
-    # Switch to AUTO
-    # -----------------------------------------------------
-
     if mode == "AUTO":
-
-        control_state["ai_reason"] = (
-            "AI control enabled."
-        )
 
         telemetry_state["model_status"] = (
             "Random Forest • Active"
         )
 
+        control_state["ai_reason"] = (
+            "AI automatic control enabled."
+        )
+
         print()
-        print("========================================")
-        print("MODE: AUTO")
-        print("AI CONTROL ENABLED")
-        print("========================================")
+        print("MODE -> AUTO")
 
-
-    # -----------------------------------------------------
-    # Switch to MANUAL
-    # -----------------------------------------------------
 
     else:
-
-        control_state["ai_reason"] = (
-            "Manual override enabled."
-        )
 
         telemetry_state["model_status"] = (
             "Manual Override • Active"
         )
 
+        control_state["ai_reason"] = (
+            "Manual override enabled."
+        )
+
         print()
-        print("========================================")
-        print("MODE: MANUAL")
-        print("AI CONTROL DISABLED")
-        print("========================================")
-
-
-    telemetry_state["ai_decision"] = (
-        "MANUAL"
-        if mode == "MANUAL"
-        else "WAITING"
-    )
+        print("MODE -> MANUAL")
 
 
     return {
@@ -374,7 +331,7 @@ async def update_mode(data: ModePayload):
 
         "mode": mode,
 
-        "pump_command":
+        "command":
             control_state["pump_command"],
 
         "pump_active":
@@ -383,7 +340,7 @@ async def update_mode(data: ModePayload):
 
 
 # =========================================================
-# 11. MANUAL PUMP CONTROL
+# MANUAL PUMP
 # =========================================================
 
 class PumpPayload(BaseModel):
@@ -392,7 +349,7 @@ class PumpPayload(BaseModel):
 
 
 @app.post("/api/pump")
-async def manual_pump(data: PumpPayload):
+async def set_manual_pump(data: PumpPayload):
 
     command = data.command.upper().strip()
 
@@ -403,20 +360,10 @@ async def manual_pump(data: PumpPayload):
     ]:
 
         return {
-
             "status": "error",
-
-            "message":
-                "Command must be PUMP_ON or PUMP_OFF.",
-
-            "command":
-                control_state["pump_command"]
+            "message": "Invalid pump command."
         }
 
-
-    # -----------------------------------------------------
-    # ONLY allow dashboard pump control in MANUAL mode
-    # -----------------------------------------------------
 
     if control_state["mode"] != "MANUAL":
 
@@ -425,22 +372,12 @@ async def manual_pump(data: PumpPayload):
             "status": "blocked",
 
             "message":
-                "Switch dashboard to MANUAL mode first.",
+                "Switch to MANUAL mode first.",
 
             "mode":
-                control_state["mode"],
-
-            "command":
-                control_state["pump_command"],
-
-            "pump_active":
-                telemetry_state["pump_active"]
+                control_state["mode"]
         }
 
-
-    # -----------------------------------------------------
-    # Manual command accepted
-    # -----------------------------------------------------
 
     set_pump_state(command)
 
@@ -451,7 +388,7 @@ async def manual_pump(data: PumpPayload):
     if command == "PUMP_ON":
 
         control_state["ai_reason"] = (
-            "Pump manually activated from dashboard."
+            "Pump turned ON manually from dashboard."
         )
 
         telemetry_state["recommended_action"] = (
@@ -461,7 +398,7 @@ async def manual_pump(data: PumpPayload):
     else:
 
         control_state["ai_reason"] = (
-            "Pump manually stopped from dashboard."
+            "Pump turned OFF manually from dashboard."
         )
 
         telemetry_state["recommended_action"] = (
@@ -476,11 +413,9 @@ async def manual_pump(data: PumpPayload):
     )
 
 
-    print()
-    print("========================================")
-    print("MANUAL COMMAND")
-    print(f"COMMAND: {command}")
-    print("========================================")
+    print(
+        f"MANUAL COMMAND -> {command}"
+    )
 
 
     return {
@@ -492,15 +427,36 @@ async def manual_pump(data: PumpPayload):
         "command": command,
 
         "pump_active":
-            telemetry_state["pump_active"],
-
-        "message":
-            "Manual command accepted."
+            telemetry_state["pump_active"]
     }
 
 
 # =========================================================
-# 12. ESP PAYLOAD
+# FAST ESP COMMAND ENDPOINT
+#
+# ESP polls this every ~500 ms.
+#
+# This removes the old 3-second command delay.
+# =========================================================
+
+@app.get("/api/esp/command")
+async def esp_command():
+
+    return {
+
+        "mode":
+            control_state["mode"],
+
+        "command":
+            control_state["pump_command"],
+
+        "pump_active":
+            telemetry_state["pump_active"]
+    }
+
+
+# =========================================================
+# ESP PAYLOAD
 # =========================================================
 
 class SensorPayload(BaseModel):
@@ -513,12 +469,11 @@ class SensorPayload(BaseModel):
 
     raining: bool = False
 
-    # Optional raw rain sensor value
     rain_raw: int | None = None
 
 
 # =========================================================
-# 13. GOOGLE SHEETS LOGGING
+# GOOGLE SHEETS
 # =========================================================
 
 GOOGLE_WEB_APP_URL = (
@@ -536,7 +491,7 @@ def log_to_sheets(
     pump_status
 ):
 
-    sheet_data = {
+    data = {
 
         "Temperature":
             temperature,
@@ -559,28 +514,24 @@ def log_to_sheets(
 
         requests.post(
             GOOGLE_WEB_APP_URL,
-            json=sheet_data,
+            json=data,
             timeout=8
         )
 
     except Exception as e:
 
         print(
-            "Google Sheets logging failed:",
+            "Google Sheets error:",
             e
         )
 
 
 # =========================================================
-# 14. ESP8266 REPORT ENDPOINT
+# ESP REPORT
 # =========================================================
 
 @app.post("/api/esp/report")
 async def esp_report(payload: SensorPayload):
-
-    # -----------------------------------------------------
-    # Update raw telemetry
-    # -----------------------------------------------------
 
     telemetry_state["temperature"] = (
         payload.temperature
@@ -602,7 +553,13 @@ async def esp_report(payload: SensorPayload):
         payload.rain_raw
         if payload.rain_raw is not None
         else (
-            1 if payload.raining else 0
+            0 if payload.raining else 1
+        )
+    )
+
+    telemetry_state["soil_percent"] = (
+        soil_adc_to_percent(
+            payload.soil
         )
     )
 
@@ -610,49 +567,34 @@ async def esp_report(payload: SensorPayload):
         time.time()
     )
 
+    telemetry_state["esp_online"] = True
 
-    # -----------------------------------------------------
-    # Calculate soil moisture percentage
-    # -----------------------------------------------------
 
-    soil_percent = soil_adc_to_percent(
-        payload.soil
-    )
-
-    telemetry_state["soil_percent"] = (
-        soil_percent
+    soil_percent = (
+        telemetry_state["soil_percent"]
     )
 
 
     print()
     print("----------------------------------------")
-    print("ESP8266 TELEMETRY")
-    print("----------------------------------------")
-
+    print("ESP TELEMETRY")
     print(
-        f"Temperature : {payload.temperature:.1f} °C"
+        f"Temperature: {payload.temperature:.1f} C"
     )
-
     print(
-        f"Humidity    : {payload.humidity:.1f} %"
+        f"Humidity: {payload.humidity:.1f} %"
     )
-
     print(
-        f"Soil ADC    : {payload.soil}"
+        f"Soil ADC: {payload.soil}"
     )
-
     print(
-        f"Soil        : {soil_percent} %"
+        f"Soil %: {soil_percent}%"
     )
-
     print(
-        f"Rain        : "
-        f"{'RAINING' if payload.raining else 'NO RAIN'}"
+        f"Rain: {'YES' if payload.raining else 'NO'}"
     )
-
     print(
-        f"Mode        : "
-        f"{control_state['mode']}"
+        f"Mode: {control_state['mode']}"
     )
 
 
@@ -662,44 +604,25 @@ async def esp_report(payload: SensorPayload):
 
     if control_state["mode"] == "MANUAL":
 
-        # -------------------------------------------------
-        # IMPORTANT:
-        # AI DOES NOT CHANGE THE PUMP IN MANUAL MODE
-        # -------------------------------------------------
+        # AI DOES NOT TOUCH THE PUMP.
 
         command = (
             control_state["pump_command"]
         )
 
-
-        telemetry_state["ai_decision"] = (
-            "MANUAL"
-        )
+        telemetry_state["ai_decision"] = "MANUAL"
 
         telemetry_state["ai_reason"] = (
             "Manual override is controlling the pump."
         )
 
-
-        if command == "PUMP_ON":
-
-            telemetry_state["recommended_action"] = (
-                "MANUAL WATERING"
-            )
-
-        else:
-
-            telemetry_state["recommended_action"] = (
-                "PUMP OFF"
-            )
-
+        telemetry_state["recommended_action"] = (
+            "MANUAL WATERING"
+            if command == "PUMP_ON"
+            else "PUMP OFF"
+        )
 
         set_pump_state(command)
-
-
-        print(
-            f"MANUAL COMMAND: {command}"
-        )
 
 
     # =====================================================
@@ -709,12 +632,7 @@ async def esp_report(payload: SensorPayload):
     else:
 
         # -------------------------------------------------
-        # STEP 1: RAIN PROTECTION
-        # -------------------------------------------------
-        #
-        # If raining, stop irrigation.
-        #
-        # This prevents watering during rainfall.
+        # RAIN PROTECTION
         # -------------------------------------------------
 
         if payload.raining:
@@ -735,10 +653,10 @@ async def esp_report(payload: SensorPayload):
 
 
         # -------------------------------------------------
-        # STEP 2: SOIL TARGET REACHED
+        # SOIL TARGET
         # -------------------------------------------------
 
-        elif soil_percent >= SOIL_STOP_LEVEL:
+        elif soil_percent >= SOIL_TARGET:
 
             command = "PUMP_OFF"
 
@@ -751,12 +669,12 @@ async def esp_report(payload: SensorPayload):
             )
 
             telemetry_state["recommended_action"] = (
-                "STOP WATERING • TARGET REACHED"
+                "STOP • TARGET REACHED"
             )
 
 
         # -------------------------------------------------
-        # STEP 3: RUN ML MODEL
+        # RANDOM FOREST
         # -------------------------------------------------
 
         else:
@@ -770,17 +688,15 @@ async def esp_report(payload: SensorPayload):
 
             try:
 
-                prediction = model.predict(
-                    live_data
-                )[0]
+                prediction =
+                    model.predict(
+                        live_data
+                    )[0]
 
-
-                ml_command = (
-                    ml_prediction_to_command(
+                ml_command =
+                    ml_to_command(
                         prediction
                     )
-                )
-
 
             except Exception as e:
 
@@ -791,10 +707,6 @@ async def esp_report(payload: SensorPayload):
 
                 ml_command = "PUMP_OFF"
 
-
-            # -------------------------------------------------
-            # LOW SOIL = irrigation allowed
-            # -------------------------------------------------
 
             if (
                 ml_command == "PUMP_ON"
@@ -808,14 +720,13 @@ async def esp_report(payload: SensorPayload):
                 )
 
                 control_state["ai_reason"] = (
-                    "ML model recommends irrigation "
+                    "Random Forest recommends irrigation "
                     "and soil moisture is below target."
                 )
 
                 telemetry_state["recommended_action"] = (
                     "START / CONTINUE WATERING"
                 )
-
 
             else:
 
@@ -826,17 +737,13 @@ async def esp_report(payload: SensorPayload):
                 )
 
                 control_state["ai_reason"] = (
-                    "ML model recommends no irrigation."
+                    "Random Forest recommends no irrigation."
                 )
 
                 telemetry_state["recommended_action"] = (
                     "NO WATERING REQUIRED"
                 )
 
-
-        # -------------------------------------------------
-        # Update AUTO state
-        # -------------------------------------------------
 
         set_pump_state(command)
 
@@ -849,31 +756,8 @@ async def esp_report(payload: SensorPayload):
         )
 
 
-        print(
-            f"AI DECISION: {command}"
-        )
-
-        print(
-            f"REASON: "
-            f"{control_state['ai_reason']}"
-        )
-
-
-    # =====================================================
-    # COMMON STATE
-    # =====================================================
-
     telemetry_state["mode"] = (
         control_state["mode"]
-    )
-
-    telemetry_state["pump_command"] = (
-        control_state["pump_command"]
-    )
-
-    telemetry_state["pump_active"] = (
-        control_state["pump_command"]
-        == "PUMP_ON"
     )
 
 
@@ -881,31 +765,21 @@ async def esp_report(payload: SensorPayload):
     # GOOGLE SHEETS
     # =====================================================
 
-    thread = threading.Thread(
-
+    threading.Thread(
         target=log_to_sheets,
-
         args=(
-
             payload.temperature,
-
             payload.humidity,
-
             payload.soil,
-
             payload.raining,
-
             control_state["pump_command"]
         ),
-
         daemon=True
-    )
-
-    thread.start()
+    ).start()
 
 
     # =====================================================
-    # ESP8266 RESPONSE
+    # RESPONSE TO ESP8266
     # =====================================================
 
     response = {
@@ -951,20 +825,19 @@ async def esp_report(payload: SensorPayload):
     }
 
 
-    print("----------------------------------------")
     print(
         f"FINAL COMMAND: "
         f"{control_state['pump_command']}"
     )
+
     print("----------------------------------------")
-    print()
 
 
     return response
 
 
 # =========================================================
-# 15. HEALTH CHECK
+# HEALTH
 # =========================================================
 
 @app.get("/api/health")
@@ -980,16 +853,16 @@ async def health():
         "pump_active":
             telemetry_state["pump_active"],
 
-        "last_update":
-            telemetry_state["last_update"],
+        "esp_online":
+            telemetry_state["esp_online"],
 
-        "model":
-            "Random Forest"
+        "last_update":
+            telemetry_state["last_update"]
     }
 
 
 # =========================================================
-# 16. START SERVER
+# RENDER START
 # =========================================================
 
 if __name__ == "__main__":
